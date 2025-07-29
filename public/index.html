@@ -1,0 +1,1888 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UniHub - A opinião dos alunos que importa</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 1rem 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 2rem;
+      font-weight: bold;
+      text-decoration: none;
+      color: white;
+    }
+
+    .slogan {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      margin-left: 1rem;
+    }
+
+    .auth-section {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    #userInfo {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .user-menu {
+      position: relative;
+    }
+
+    .user-name {
+      cursor: pointer;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.2);
+      transition: background 0.3s;
+    }
+
+    .user-name:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    .dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      min-width: 150px;
+      z-index: 1000;
+      margin-top: 0.5rem;
+    }
+
+    .dropdown a {
+      display: block;
+      padding: 0.75rem 1rem;
+      text-decoration: none;
+      color: #333;
+      transition: background 0.3s;
+    }
+
+    .dropdown a:hover {
+      background: #f8f9fa;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: white;
+      color: #667eea;
+    }
+
+    .btn-primary:hover {
+      background: #f8f9fa;
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: 1px solid white;
+    }
+
+    .btn-secondary:hover {
+      background: white;
+      color: #667eea;
+    }
+
+    .btn-action {
+      background: #28a745;
+      color: white;
+      margin: 1rem 0;
+    }
+
+    .btn-action:hover {
+      background: #218838;
+    }
+
+    /* Main Content */
+    main {
+      min-height: calc(100vh - 200px);
+      padding: 2rem 0;
+    }
+
+    /* Search Section */
+    .search-section {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .search-section h1 {
+      font-size: 2.5rem;
+      color: #333;
+      margin-bottom: 2rem;
+      font-weight: 300;
+    }
+
+    .search-container {
+      position: relative;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    #searchInput {
+      width: 100%;
+      padding: 1rem 1.5rem;
+      font-size: 1.1rem;
+      border: 2px solid #e9ecef;
+      border-radius: 50px;
+      outline: none;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    #searchInput:focus {
+      border-color: #667eea;
+      box-shadow: 0 4px 20px rgba(102,126,234,0.3);
+    }
+
+    .search-results {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      z-index: 100;
+      margin-top: 0.5rem;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .search-result-item {
+      padding: 1rem 1.5rem;
+      cursor: pointer;
+      transition: background 0.3s;
+      border-bottom: 1px solid #f8f9fa;
+    }
+
+    .search-result-item:hover {
+      background: #f8f9fa;
+    }
+
+    .search-result-item:last-child {
+      border-bottom: none;
+    }
+
+    /* Popular Section */
+    .popular-section {
+      margin-bottom: 3rem;
+    }
+
+    .popular-section h2 {
+      text-align: center;
+      margin-bottom: 2rem;
+      color: #333;
+      font-weight: 400;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 15px;
+      padding: 1.5rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      transition: all 0.3s;
+      cursor: pointer;
+      border: 1px solid #e9ecef;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+
+    .card h3 {
+      color: #667eea;
+      margin-bottom: 0.5rem;
+      font-size: 1.3rem;
+    }
+
+    .card .code {
+      color: #6c757d;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .card .professor {
+      color: #495057;
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+    }
+
+    .card .stats {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: #6c757d;
+    }
+
+    /* Subject Details Section */
+    .details-section {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .subject-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .subject-header h2 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      font-weight: 300;
+    }
+
+    .subject-meta {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    .back-btn {
+      position: absolute;
+      left: 2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .back-btn:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      background: #f8f9fa;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 1rem 2rem;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #6c757d;
+      transition: all 0.3s;
+    }
+
+    .tab.active {
+      background: white;
+      color: #667eea;
+      border-bottom: 3px solid #667eea;
+    }
+
+    .tab:hover:not(.active) {
+      background: #e9ecef;
+    }
+
+    /* Tab Content */
+    .tab-content {
+      padding: 2rem;
+    }
+
+    .rating-summary {
+      background: #f8f9fa;
+      padding: 1.5rem;
+      border-radius: 10px;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .rating-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .rating-item {
+      text-align: center;
+    }
+
+    .rating-item h4 {
+      margin-bottom: 0.5rem;
+      color: #495057;
+    }
+
+    .stars {
+      font-size: 1.2rem;
+      color: #ffc107;
+    }
+
+    .rating-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #667eea;
+      margin-top: 0.5rem;
+    }
+
+    /* Reviews */
+    .review-list {
+      space-y: 1rem;
+    }
+
+    .review-item {
+      background: #f8f9fa;
+      padding: 1.5rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      border-left: 4px solid #667eea;
+    }
+
+    .review-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .review-author {
+      font-weight: 600;
+      color: #495057;
+    }
+
+    .review-date {
+      font-size: 0.9rem;
+      color: #6c757d;
+    }
+
+    .review-ratings {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .review-rating {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      color: #495057;
+    }
+
+    .review-comment {
+      color: #495057;
+      line-height: 1.6;
+    }
+
+    /* Materials */
+    .material-list {
+      list-style: none;
+    }
+
+    .material-item {
+      display: flex;
+      justify-content: between;
+      align-items: center;
+      background: #f8f9fa;
+      padding: 1rem 1.5rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      border-left: 4px solid #28a745;
+    }
+
+    .material-info {
+      flex: 1;
+    }
+
+    .material-name {
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 0.25rem;
+    }
+
+    .material-meta {
+      font-size: 0.9rem;
+      color: #6c757d;
+    }
+
+    .material-type {
+      background: #28a745;
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 15px;
+      font-size: 0.8rem;
+      margin-right: 1rem;
+    }
+
+    .btn-download {
+      background: #007bff;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: background 0.3s;
+    }
+
+    .btn-download:hover {
+      background: #0056b3;
+    }
+
+    /* Sidebar Ads */
+    .content-with-sidebar {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 2rem;
+    }
+
+    .ads-sidebar {
+      background: #f8f9fa;
+      padding: 1.5rem;
+      border-radius: 10px;
+      height: fit-content;
+      position: sticky;
+      top: 2rem;
+    }
+
+    .ad-banner {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      padding: 2rem;
+      border-radius: 10px;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    /* Profile Section */
+    .profile-section {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .profile-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .profile-info {
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .profile-info h3 {
+      margin-bottom: 1rem;
+      color: #495057;
+    }
+
+    .profile-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 1rem;
+      background: #f8f9fa;
+      border-radius: 10px;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #667eea;
+    }
+
+    .stat-label {
+      color: #6c757d;
+      font-size: 0.9rem;
+    }
+
+    /* Modal */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 15px;
+      padding: 2rem;
+      max-width: 500px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #6c757d;
+      background: none;
+      border: none;
+    }
+
+    .close:hover {
+      color: #495057;
+    }
+
+    .modal h3 {
+      margin-bottom: 1.5rem;
+      color: #495057;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #495057;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .rating-input {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .rating-stars {
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .star {
+      font-size: 1.5rem;
+      color: #e9ecef;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .star:hover,
+    .star.active {
+      color: #ffc107;
+    }
+
+    .file-upload {
+      border: 2px dashed #e9ecef;
+      border-radius: 8px;
+      padding: 2rem;
+      text-align: center;
+      transition: border-color 0.3s;
+      cursor: pointer;
+    }
+
+    .file-upload:hover {
+      border-color: #667eea;
+    }
+
+    .file-upload.dragover {
+      border-color: #667eea;
+      background: #f8f9ff;
+    }
+
+    /* Footer */
+    footer {
+      background: #343a40;
+      color: white;
+      padding: 2rem 0;
+      text-align: center;
+      margin-top: 3rem;
+    }
+
+    .footer-banner {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    /* Utilities */
+    .hidden {
+      display: none !important;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .mb-2 {
+      margin-bottom: 1rem;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: #6c757d;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #6c757d;
+    }
+
+    .empty-state h3 {
+      margin-bottom: 1rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .search-section h1 {
+        font-size: 2rem;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .content-with-sidebar {
+        grid-template-columns: 1fr;
+      }
+
+      .ads-sidebar {
+        order: -1;
+      }
+
+      .rating-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .review-ratings {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .material-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+
+      .subject-header {
+        position: relative;
+        padding: 1.5rem;
+      }
+
+      .subject-header h2 {
+        font-size: 1.8rem;
+      }
+
+      .back-btn {
+        position: static;
+        transform: none;
+        margin-bottom: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <div style="display: flex; align-items: center;">
+          <a href="#" class="logo" onclick="showHome()">UniHub</a>
+          <div class="slogan">A opinião dos alunos que importa</div>
+        </div>
+        <div class="auth-section">
+          <div id="authButtons">
+            <button class="btn btn-primary" onclick="openAuthModal('login')">Entrar</button>
+            <button class="btn btn-secondary" onclick="openAuthModal('register')">Cadastrar</button>
+          </div>
+          <div id="userInfo" class="hidden">
+            <div class="user-menu">
+              <div class="user-name" onclick="toggleUserMenu()">
+                <span id="userName"></span> ▼
+              </div>
+              <div id="userDropdown" class="dropdown hidden">
+                <a href="#" onclick="showProfile()">Meu Perfil</a>
+                <a href="#" onclick="logout()">Sair</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <!-- Home Section -->
+      <section id="homeSection">
+        <div class="search-section">
+          <h1>Qual disciplina você procura?</h1>
+          <div class="search-container">
+            <input type="text" placeholder="Digite o nome ou código da disciplina" id="searchInput" />
+            <div id="searchResults" class="search-results hidden"></div>
+          </div>
+        </div>
+
+        <div class="popular-section">
+          <h2>Disciplinas Populares</h2>
+          <div class="cards" id="popularSubjects">
+            <div class="loading">Carregando disciplinas...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Subject Details Section -->
+      <section id="subjectDetails" class="details-section hidden">
+        <div class="subject-header">
+          <button class="back-btn" onclick="showHome()">←</button>
+          <h2 id="subjectTitle">Nome da Disciplina</h2>
+          <div class="subject-meta">
+            <span id="subjectCode">Código</span> - <span id="subjectProfessor">Professor</span>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <button class="tab active" data-tab="reviews" onclick="switchTab('reviews')">Avaliações</button>
+          <button class="tab" data-tab="materials" onclick="switchTab('materials')">Materiais de Estudo</button>
+        </div>
+
+        <div class="content-with-sidebar">
+          <div>
+            <!-- Reviews Tab -->
+            <div class="tab-content" id="reviewsTab">
+              <div class="rating-summary">
+                <div class="rating-grid" id="ratingSummary">
+                  <div class="loading">Carregando avaliações...</div>
+                </div>
+                <button class="btn btn-action" onclick="openModal('review')">Adicionar sua Avaliação</button>
+              </div>
+              <div class="review-list" id="reviewList"></div>
+            </div>
+
+            <!-- Materials Tab -->
+            <div class="tab-content hidden" id="materialsTab">
+              <div class="text-center mb-2">
+                <button class="btn btn-action" onclick="openModal('material')">Enviar Material</button>
+              </div>
+              <ul class="material-list" id="materialList">
+                <div class="loading">Carregando materiais...</div>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Sidebar Ads -->
+          <div class="ads-sidebar">
+            <div class="ad-banner">
+              <h4>Publicidade</h4>
+              <p>Espaço para anúncios</p>
+            </div>
+            <div class="ad-banner">
+              <h4>Google AdSense</h4>
+              <p>Banner lateral</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- User Profile Section -->
+      <section id="userProfile" class="profile-section hidden">
+        <div class="profile-header">
+          <button class="back-btn" onclick="showHome()">←</button>
+          <h2>Perfil do Usuário</h2>
+        </div>
+
+        <div class="profile-info">
+          <h3 id="profileUserName">Nome do Usuário</h3>
+          <p id="profileUserEmail">email@exemplo.com</p>
+
+          <div class="profile-stats">
+            <div class="stat-item">
+              <div class="stat-number" id="userReviewCount">0</div>
+              <div class="stat-label">Avaliações</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number" id="userMaterialCount">0</div>
+              <div class="stat-label">Materiais</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <button class="tab active" data-tab="myReviews" onclick="switchProfileTab('myReviews')">Minhas Avaliações</button>
+          <button class="tab" data-tab="myUploads" onclick="switchProfileTab('myUploads')">Meus Envios</button>
+        </div>
+
+        <div class="tab-content" id="myReviewsTab">
+          <div id="userReviewsList" class="review-list">
+            <div class="loading">Carregando suas avaliações...</div>
+          </div>
+        </div>
+
+        <div class="tab-content hidden" id="myUploadsTab">
+          <ul id="userMaterialsList" class="material-list">
+            <div class="loading">Carregando seus materiais...</div>
+          </ul>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-banner">
+        Banner de rodapé - Espaço para Google AdSense
+      </div>
+      <p>&copy; 2024 UniHub. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- Modals -->
+  <!-- Auth Modal -->
+  <div id="authModal" class="modal hidden">
+    <div class="modal-content">
+      <button class="close" onclick="closeModal()">&times;</button>
+
+      <!-- Login Form -->
+      <div id="loginForm">
+        <h3>Entrar na UniHub</h3>
+        <form onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label>Email:</label>
+            <input type="email" id="loginEmail" required>
+          </div>
+          <div class="form-group">
+            <label>Senha:</label>
+            <input type="password" id="loginPassword" required>
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Entrar</button>
+          </div>
+          <div class="text-center">
+            <a href="#" onclick="switchAuthMode('register')">Não tem conta? Cadastre-se</a>
+          </div>
+        </form>
+      </div>
+
+      <!-- Register Form -->
+      <div id="registerForm" class="hidden">
+        <h3>Cadastrar na UniHub</h3>
+        <form onsubmit="handleRegister(event)">
+          <div class="form-group">
+            <label>Nome:</label>
+            <input type="text" id="registerName" required>
+          </div>
+          <div class="form-group">
+            <label>Email:</label>
+            <input type="email" id="registerEmail" required>
+          </div>
+          <div class="form-group">
+            <label>Senha:</label>
+            <input type="password" id="registerPassword" required>
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Cadastrar</button>
+          </div>
+          <div class="text-center">
+            <a href="#" onclick="switchAuthMode('login')">Já tem conta? Entre</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Review Modal -->
+  <div id="reviewModal" class="modal hidden">
+    <div class="modal-content">
+      <button class="close" onclick="closeModal()">&times;</button>
+      <h3>Nova Avaliação</h3>
+      <form onsubmit="handleReviewSubmit(event)">
+        <div class="form-group">
+          <label>Dificuldade:</label>
+          <div class="rating-input">
+            <div class="rating-stars" data-rating="dificuldade">
+              <span class="star" data-value="1">★</span>
+              <span class="star" data-value="2">★</span>
+              <span class="star" data-value="3">★</span>
+              <span class="star" data-value="4">★</span>
+              <span class="star" data-value="5">★</span>
+            </div>
+            <span class="rating-label">Muito Fácil - Muito Difícil</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Didática do Professor:</label>
+          <div class="rating-input">
+            <div class="rating-stars" data-rating="didatica">
+              <span class="star" data-value="1">★</span>
+              <span class="star" data-value="2">★</span>
+              <span class="star" data-value="3">★</span>
+              <span class="star" data-value="4">★</span>
+              <span class="star" data-value="5">★</span>
+            </div>
+            <span class="rating-label">Muito Ruim - Excelente</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Carga Horária:</label>
+          <div class="rating-input">
+            <div class="rating-stars" data-rating="carga_horaria">
+              <span class="star" data-value="1">★</span>
+              <span class="star" data-value="2">★</span>
+              <span class="star" data-value="3">★</span>
+              <span class="star" data-value="4">★</span>
+              <span class="star" data-value="5">★</span>
+            </div>
+            <span class="rating-label">Muito Leve - Muito Pesada</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Comentário:</label>
+          <textarea id="reviewComment" placeholder="Compartilhe sua experiência com esta disciplina..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Publicar Avaliação</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Material Modal -->
+  <div id="materialModal" class="modal hidden">
+    <div class="modal-content">
+      <button class="close" onclick="closeModal()">&times;</button>
+      <h3>Enviar Material</h3>
+      <form onsubmit="handleMaterialSubmit(event)">
+        <div class="form-group">
+          <label>Tipo de Material:</label>
+          <select id="materialType" required>
+            <option value="">Selecione o tipo</option>
+            <option value="Prova">Prova</option>
+            <option value="Lista de Exercícios">Lista de Exercícios</option>
+            <option value="Resumo">Resumo</option>
+            <option value="Slides">Slides</option>
+            <option value="Apostila">Apostila</option>
+            <option value="Outros">Outros</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Arquivo:</label>
+          <div class="file-upload" onclick="document.getElementById('materialFile').click()">
+            <div id="fileUploadText">
+              <p>📁 Clique para selecionar um arquivo</p>
+              <p style="font-size: 0.9rem; color: #6c757d;">ou arraste e solte aqui</p>
+            </div>
+            <input type="file" id="materialFile" style="display: none;" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Enviar Material</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Estado global da aplicação
+    let currentUser = null;
+    let currentSubject = null;
+    let searchTimeout = null;
+
+    // Ratings para o modal de avaliação
+    const ratings = {
+      dificuldade: 0,
+      didatica: 0,
+      carga_horaria: 0
+    };
+
+    // Inicialização
+    document.addEventListener('DOMContentLoaded', function() {
+      loadPopularSubjects();
+      setupEventListeners();
+      checkAuthStatus();
+    });
+
+    function setupEventListeners() {
+      // Search input
+      document.getElementById('searchInput').addEventListener('input', handleSearch);
+
+      // Click outside to close dropdowns
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.user-menu')) {
+          document.getElementById('userDropdown').classList.add('hidden');
+        }
+        if (!e.target.closest('.search-container')) {
+          document.getElementById('searchResults').classList.add('hidden');
+        }
+      });
+
+      // Rating stars setup
+      setupRatingStars();
+
+      // File upload setup
+      setupFileUpload();
+    }
+
+    function setupRatingStars() {
+      document.querySelectorAll('.rating-stars').forEach(container => {
+        const rating = container.dataset.rating;
+        const stars = container.querySelectorAll('.star');
+
+        stars.forEach((star, index) => {
+          star.addEventListener('click', () => {
+            const value = parseInt(star.dataset.value);
+            ratings[rating] = value;
+
+            // Update visual state
+            stars.forEach((s, i) => {
+              s.classList.toggle('active', i < value);
+            });
+          });
+
+          star.addEventListener('mouseenter', () => {
+            const value = parseInt(star.dataset.value);
+            stars.forEach((s, i) => {
+              s.style.color = i < value ? '#ffc107' : '#e9ecef';
+            });
+          });
+        });
+
+        container.addEventListener('mouseleave', () => {
+          const currentRating = ratings[rating];
+          stars.forEach((s, i) => {
+            s.style.color = i < currentRating ? '#ffc107' : '#e9ecef';
+          });
+        });
+      });
+    }
+
+    function setupFileUpload() {
+      const fileUpload = document.querySelector('.file-upload');
+      const fileInput = document.getElementById('materialFile');
+      const fileUploadText = document.getElementById('fileUploadText');
+
+      fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          fileUploadText.innerHTML = `
+            <p>📄 ${file.name}</p>
+            <p style="font-size: 0.9rem; color: #6c757d;">${formatFileSize(file.size)}</p>
+          `;
+        }
+      });
+
+      // Drag and drop
+      fileUpload.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        fileUpload.classList.add('dragover');
+      });
+
+      fileUpload.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        fileUpload.classList.remove('dragover');
+      });
+
+      fileUpload.addEventListener('drop', function(e) {
+        e.preventDefault();
+        fileUpload.classList.remove('dragover');
+
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          fileInput.files = files;
+          const file = files[0];
+          fileUploadText.innerHTML = `
+            <p>📄 ${file.name}</p>
+            <p style="font-size: 0.9rem; color: #6c757d;">${formatFileSize(file.size)}</p>
+          `;
+        }
+      });
+    }
+
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    // Navegação
+    function showHome() {
+      document.getElementById('homeSection').classList.remove('hidden');
+      document.getElementById('subjectDetails').classList.add('hidden');
+      document.getElementById('userProfile').classList.add('hidden');
+      currentSubject = null;
+    }
+
+    function showSubject(subjectId) {
+      currentSubject = subjectId;
+      loadSubjectDetails(subjectId);
+      document.getElementById('homeSection').classList.add('hidden');
+      document.getElementById('subjectDetails').classList.remove('hidden');
+      document.getElementById('userProfile').classList.add('hidden');
+    }
+
+    function showProfile() {
+      if (!currentUser) {
+        openAuthModal('login');
+        return;
+      }
+
+      loadUserProfile();
+      document.getElementById('homeSection').classList.add('hidden');
+      document.getElementById('subjectDetails').classList.add('hidden');
+      document.getElementById('userProfile').classList.remove('hidden');
+      document.getElementById('userDropdown').classList.add('hidden');
+    }
+
+    // Abas
+    function switchTab(tabName) {
+      // Update tab buttons
+      document.querySelectorAll('#subjectDetails .tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+      // Update tab content
+      document.getElementById('reviewsTab').classList.toggle('hidden', tabName !== 'reviews');
+      document.getElementById('materialsTab').classList.toggle('hidden', tabName !== 'materials');
+
+      // Load content if needed
+      if (tabName === 'materials' && currentSubject) {
+        loadSubjectMaterials(currentSubject);
+      }
+    }
+
+    function switchProfileTab(tabName) {
+      // Update tab buttons
+      document.querySelectorAll('#userProfile .tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      document.querySelector(`#userProfile [data-tab="${tabName}"]`).classList.add('active');
+
+      // Update tab content
+      document.getElementById('myReviewsTab').classList.toggle('hidden', tabName !== 'myReviews');
+      document.getElementById('myUploadsTab').classList.toggle('hidden', tabName !== 'myUploads');
+
+      // Load content if needed
+      if (tabName === 'myUploads') {
+        loadUserMaterials();
+      }
+    }
+
+    // Busca
+    function handleSearch(e) {
+      const query = e.target.value.trim();
+
+      clearTimeout(searchTimeout);
+
+      if (query.length < 2) {
+        document.getElementById('searchResults').classList.add('hidden');
+        return;
+      }
+
+      searchTimeout = setTimeout(() => {
+        searchSubjects(query);
+      }, 300);
+    }
+
+    async function searchSubjects(query) {
+      try {
+        const response = await fetch(`/api/subjects/search?q=${encodeURIComponent(query)}`);
+        const subjects = await response.json();
+
+        const resultsContainer = document.getElementById('searchResults');
+
+        if (subjects.length === 0) {
+          resultsContainer.innerHTML = '<div class="search-result-item">Nenhuma disciplina encontrada</div>';
+        } else {
+          resultsContainer.innerHTML = subjects.map(subject => `
+            <div class="search-result-item" onclick="showSubject(${subject.id})">
+              <strong>${subject.name}</strong> - ${subject.code}<br>
+              <small>Prof. ${subject.professor}</small>
+            </div>
+          `).join('');
+        }
+
+        resultsContainer.classList.remove('hidden');
+      } catch (error) {
+        console.error('Erro na busca:', error);
+      }
+    }
+
+    // Carregar disciplinas populares
+    async function loadPopularSubjects() {
+      try {
+        const response = await fetch('/api/subjects/popular');
+        const subjects = await response.json();
+
+        const container = document.getElementById('popularSubjects');
+
+        if (subjects.length === 0) {
+          container.innerHTML = '<div class="empty-state"><h3>Nenhuma disciplina encontrada</h3></div>';
+        } else {
+          container.innerHTML = subjects.map(subject => `
+            <div class="card" onclick="showSubject(${subject.id})">
+              <h3>${subject.name}</h3>
+              <div class="code">${subject.code}</div>
+              <div class="professor">Prof. ${subject.professor}</div>
+              <div class="stats">
+                <span>${subject.review_count || 0} avaliações</span>
+              </div>
+            </div>
+          `).join('');
+        }
+      } catch (error) {
+        console.error('Erro ao carregar disciplinas populares:', error);
+        document.getElementById('popularSubjects').innerHTML = '<div class="empty-state"><h3>Erro ao carregar disciplinas</h3></div>';
+      }
+    }
+
+    // Carregar detalhes da disciplina
+    async function loadSubjectDetails(subjectId) {
+      try {
+        const [subjectResponse, reviewsResponse] = await Promise.all([
+          fetch(`/api/subjects/${subjectId}`),
+          fetch(`/api/subjects/${subjectId}/reviews`)
+        ]);
+
+        const subject = await subjectResponse.json();
+        const reviewsData = await reviewsResponse.json();
+
+        // Update subject header
+        document.getElementById('subjectTitle').textContent = subject.name;
+        document.getElementById('subjectCode').textContent = subject.code;
+        document.getElementById('subjectProfessor').textContent = `Prof. ${subject.professor}`;
+
+        // Update ratings summary
+        loadRatingSummary(reviewsData.averages);
+
+        // Load reviews
+        loadReviews(reviewsData.reviews);
+
+        // Reset to reviews tab
+        switchTab('reviews');
+
+      } catch (error) {
+        console.error('Erro ao carregar detalhes da disciplina:', error);
+      }
+    }
+
+    function loadRatingSummary(averages) {
+      const container = document.getElementById('ratingSummary');
+
+      if (!averages || averages.total_reviews === 0) {
+        container.innerHTML = '<div class="empty-state"><p>Ainda não há avaliações para esta disciplina</p></div>';
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="rating-item">
+          <h4>Dificuldade</h4>
+          <div class="stars">${renderStars(averages.avg_dificuldade)}</div>
+          <div class="rating-value">${averages.avg_dificuldade.toFixed(1)}</div>
+        </div>
+        <div class="rating-item">
+          <h4>Didática</h4>
+          <div class="stars">${renderStars(averages.avg_didatica)}</div>
+          <div class="rating-value">${averages.avg_didatica.toFixed(1)}</div>
+        </div>
+        <div class="rating-item">
+          <h4>Carga Horária</h4>
+          <div class="stars">${renderStars(averages.avg_carga_horaria)}</div>
+          <div class="rating-value">${averages.avg_carga_horaria.toFixed(1)}</div>
+        </div>
+        <div class="rating-item">
+          <h4>Total</h4>
+          <div class="rating-value">${averages.total_reviews}</div>
+          <small>avaliações</small>
+        </div>
+      `;
+    }
+
+    function loadReviews(reviews) {
+      const container = document.getElementById('reviewList');
+
+      if (reviews.length === 0) {
+        container.innerHTML = '<div class="empty-state"><h3>Nenhuma avaliação ainda</h3><p>Seja o primeiro a avaliar esta disciplina!</p></div>';
+        return;
+      }
+
+      container.innerHTML = reviews.map(review => `
+        <div class="review-item">
+          <div class="review-header">
+            <div class="review-author">${review.author_name}</div>
+            <div class="review-date">${formatDate(review.created_at)}</div>
+          </div>
+          <div class="review-ratings">
+            <div class="review-rating">
+              <strong>Dificuldade:</strong> ${renderStars(review.dificuldade)}
+            </div>
+            <div class="review-rating">
+              <strong>Didática:</strong> ${renderStars(review.didatica)}
+            </div>
+            <div class="review-rating">
+              <strong>Carga Horária:</strong> ${renderStars(review.carga_horaria)}
+            </div>
+          </div>
+          <div class="review-comment">${review.comentario}</div>
+        </div>
+      `).join('');
+    }
+
+    async function loadSubjectMaterials(subjectId) {
+      try {
+        const response = await fetch(`/api/subjects/${subjectId}/materials`);
+        const materials = await response.json();
+
+        const container = document.getElementById('materialList');
+
+        if (materials.length === 0) {
+          container.innerHTML = '<div class="empty-state"><h3>Nenhum material disponível</h3><p>Seja o primeiro a compartilhar um material!</p></div>';
+          return;
+        }
+
+        container.innerHTML = materials.map(material => `
+          <li class="material-item">
+            <div class="material-info">
+              <div class="material-name">${material.originalname}</div>
+              <div class="material-meta">
+                Enviado por ${material.uploader_name} • ${formatDate(material.created_at)}
+              </div>
+            </div>
+            <div class="material-type">${material.tipo}</div>
+            <a href="/api/materials/${material.filename}/download" class="btn-download" target="_blank">
+              Baixar
+            </a>
+          </li>
+        `).join('');
+
+      } catch (error) {
+        console.error('Erro ao carregar materiais:', error);
+        document.getElementById('materialList').innerHTML = '<div class="empty-state"><h3>Erro ao carregar materiais</h3></div>';
+      }
+    }
+
+    function renderStars(rating) {
+      const fullStars = Math.floor(rating);
+      const hasHalfStar = rating % 1 >= 0.5;
+      const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+      return '★'.repeat(fullStars) +
+             (hasHalfStar ? '⭐' : '') +
+             '☆'.repeat(emptyStars);
+    }
+
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+    }
+
+    // Modais
+    function openModal(type) {
+      if (!currentUser && (type === 'review' || type === 'material')) {
+        openAuthModal('login');
+        return;
+      }
+
+      switch(type) {
+        case 'review':
+          document.getElementById('reviewModal').classList.remove('hidden');
+          resetReviewForm();
+          break;
+        case 'material':
+          document.getElementById('materialModal').classList.remove('hidden');
+          resetMaterialForm();
+          break;
+      }
+    }
+
+    function openAuthModal(mode) {
+      document.getElementById('authModal').classList.remove('hidden');
+      switchAuthMode(mode);
+    }
+
+    function closeModal() {
+      document.querySelectorAll('.modal').forEach(modal => {
+        modal.classList.add('hidden');
+      });
+    }
+
+    function switchAuthMode(mode) {
+      const loginForm = document.getElementById('loginForm');
+      const registerForm = document.getElementById('registerForm');
+
+      if (mode === 'login') {
+        loginForm.classList.remove('hidden');
+        registerForm.classList.add('hidden');
+      } else {
+        loginForm.classList.add('hidden');
+        registerForm.classList.remove('hidden');
+      }
+    }
+
+    function resetReviewForm() {
+      // Reset ratings
+      Object.keys(ratings).forEach(key => {
+        ratings[key] = 0;
+      });
+
+      // Reset visual stars
+      document.querySelectorAll('.rating-stars .star').forEach(star => {
+        star.classList.remove('active');
+        star.style.color = '#e9ecef';
+      });
+
+      // Reset comment
+      document.getElementById('reviewComment').value = '';
+    }
+
+    function resetMaterialForm() {
+      document.getElementById('materialType').value = '';
+      document.getElementById('materialFile').value = '';
+      document.getElementById('fileUploadText').innerHTML = `
+        <p>📁 Clique para selecionar um arquivo</p>
+        <p style="font-size: 0.9rem; color: #6c757d;">ou arraste e solte aqui</p>
+      `;
+    }
+
+    // Autenticação
+    function checkAuthStatus() {
+      const user = localStorage.getItem('currentUser');
+      if (user) {
+        currentUser = JSON.parse(user);
+        updateAuthUI();
+      }
+    }
+
+    function updateAuthUI() {
+      const authButtons = document.getElementById('authButtons');
+      const userInfo = document.getElementById('userInfo');
+      const userName = document.getElementById('userName');
+
+      if (currentUser) {
+        authButtons.classList.add('hidden');
+        userInfo.classList.remove('hidden');
+        userName.textContent = currentUser.name;
+      } else {
+        authButtons.classList.remove('hidden');
+        userInfo.classList.add('hidden');
+      }
+    }
+
+    function toggleUserMenu() {
+      const dropdown = document.getElementById('userDropdown');
+      dropdown.classList.toggle('hidden');
+    }
+
+    async function handleLogin(event) {
+      event.preventDefault();
+
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+
+      try {
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          currentUser = data.user;
+          localStorage.setItem('currentUser', JSON.stringify(currentUser));
+          updateAuthUI();
+          closeModal();
+          alert('Login realizado com sucesso!');
+        } else {
+          alert(data.error || 'Erro no login');
+        }
+      } catch (error) {
+        console.error('Erro no login:', error);
+        alert('Erro de conexão');
+      }
+    }
+
+    async function handleRegister(event) {
+      event.preventDefault();
+
+      const name = document.getElementById('registerName').value;
+      const email = document.getElementById('registerEmail').value;
+      const password = document.getElementById('registerPassword').value;
+
+      try {
+        const response = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ name, email, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert('Cadastro realizado com sucesso! Faça login para continuar.');
+          switchAuthMode('login');
+        } else {
+          alert(data.error || 'Erro no cadastro');
+        }
+      } catch (error) {
+        console.error('Erro no cadastro:', error);
+        alert('Erro de conexão');
+      }
+    }
+
+    function logout() {
+      currentUser = null;
+      localStorage.removeItem('currentUser');
+      updateAuthUI();
+      showHome();
+      document.getElementById('userDropdown').classList.add('hidden');
+    }
+
+    // Submissão de avaliação
+    async function handleReviewSubmit(event) {
+      event.preventDefault();
+
+      if (!currentUser) {
+        alert('Você precisa estar logado para avaliar');
+        return;
+      }
+
+      if (!currentSubject) {
+        alert('Erro: disciplina não selecionada');
+        return;
+      }
+
+      // Validar ratings
+      if (ratings.dificuldade === 0 || ratings.didatica === 0 || ratings.carga_horaria === 0) {
+        alert('Por favor, avalie todos os critérios');
+        return;
+      }
+
+      const comentario = document.getElementById('reviewComment').value.trim();
+      if (!comentario) {
+        alert('Por favor, escreva um comentário');
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/subjects/${currentSubject}/reviews`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            user_id: currentUser.id,
+            dificuldade: ratings.dificuldade,
+            didatica: ratings.didatica,
+            carga_horaria: ratings.carga_horaria,
+            comentario: comentario
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          closeModal();
+          alert('Avaliação publicada com sucesso!');
+          // Recarregar avaliações
+          loadSubjectDetails(currentSubject);
+        } else {
+          alert(data.error || 'Erro ao publicar avaliação');
+        }
+      } catch (error) {
+        console.error('Erro ao enviar avaliação:', error);
+        alert('Erro de conexão');
+      }
+    }
+
+    // Submissão de material
+    async function handleMaterialSubmit(event) {
+      event.preventDefault();
+
+      if (!currentUser) {
+        alert('Você precisa estar logado para enviar materiais');
+        return;
+      }
+
+      if (!currentSubject) {
+        alert('Erro: disciplina não selecionada');
+        return;
+      }
+
+      const tipo = document.getElementById('materialType').value;
+      const file = document.getElementById('materialFile').files[0];
+
+      if (!tipo || !file) {
+        alert('Por favor, selecione o tipo e o arquivo');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('user_id', currentUser.id);
+      formData.append('tipo', tipo);
+      formData.append('file', file);
+
+      try {
+        const response = await fetch(`/api/subjects/${currentSubject}/materials`, {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          closeModal();
+          alert('Material enviado com sucesso!');
+          // Recarregar materiais se estiver na aba de materiais
+          if (!document.getElementById('materialsTab').classList.contains('hidden')) {
+            loadSubjectMaterials(currentSubject);
+          }
+        } else {
+          alert(data.error || 'Erro ao enviar material');
+        }
+      } catch (error) {
+        console.error('Erro ao enviar material:', error);
+        alert('Erro de conexão');
+      }
+    }
+
+    // Perfil do usuário
+    async function loadUserProfile() {
+      if (!currentUser) return;
+
+      try {
+        const [reviewsResponse, materialsResponse] = await Promise.all([
+          fetch(`/api/users/${currentUser.id}/reviews`),
+          fetch(`/api/users/${currentUser.id}/materials`)
+        ]);
+
+        const reviews = await reviewsResponse.json();
+        const materials = await materialsResponse.json();
+
+        // Update profile info
+        document.getElementById('profileUserName').textContent = currentUser.name;
+        document.getElementById('profileUserEmail').textContent = currentUser.email;
+        document.getElementById('userReviewCount').textContent = reviews.length;
+        document.getElementById('userMaterialCount').textContent = materials.length;
+
+        // Load user reviews
+        loadUserReviews(reviews);
+
+        // Reset to reviews tab
+        switchProfileTab('myReviews');
+
+      } catch (error) {
+        console.error('Erro ao carregar perfil:', error);
+      }
+    }
+
+    function loadUserReviews(reviews) {
+      const container = document.getElementById('userReviewsList');
+
+      if (reviews.length === 0) {
+        container.innerHTML = '<div class="empty-state"><h3>Você ainda não fez nenhuma avaliação</h3><p>Explore as disciplinas e compartilhe sua experiência!</p></div>';
+        return;
+      }
+
+      container.innerHTML = reviews.map(review => `
+        <div class="review-item">
+          <div class="review-header">
+            <div class="review-author">
+              <strong>${review.subject_name}</strong> (${review.subject_code})
+            </div>
+            <div class="review-date">${formatDate(review.created_at)}</div>
+          </div>
+          <div class="review-ratings">
+            <div class="review-rating">
+              <strong>Dificuldade:</strong> ${renderStars(review.dificuldade)}
+            </div>
+            <div class="review-rating">
+              <strong>Didática:</strong> ${renderStars(review.didatica)}
+            </div>
+            <div class="review-rating">
+              <strong>Carga Horária:</strong> ${renderStars(review.carga_horaria)}
+            </div>
+          </div>
+          <div class="review-comment">${review.comentario}</div>
+        </div>
+      `).join('');
+    }
+
+    async function loadUserMaterials() {
+      if (!currentUser) return;
+
+      try {
+        const response = await fetch(`/api/users/${currentUser.id}/materials`);
+        const materials = await response.json();
+
+        const container = document.getElementById('userMaterialsList');
+
+        if (materials.length === 0) {
+          container.innerHTML = '<div class="empty-state"><h3>Você ainda não enviou nenhum material</h3><p>Ajude outros alunos compartilhando seus materiais de estudo!</p></div>';
+          return;
+        }
+
+        container.innerHTML = materials.map(material => `
+          <li class="material-item">
+            <div class="material-info">
+              <div class="material-name">${material.originalname}</div>
+              <div class="material-meta">
+                <strong>${material.subject_name}</strong> (${material.subject_code}) • ${formatDate(material.created_at)}
+              </div>
+            </div>
+            <div class="material-type">${material.tipo}</div>
+            <a href="/api/materials/${material.filename}/download" class="btn-download" target="_blank">
+              Baixar
+            </a>
+          </li>
+        `).join('');
+
+      } catch (error) {
+        console.error('Erro ao carregar materiais do usuário:', error);
+        document.getElementById('userMaterialsList').innerHTML = '<div class="empty-state"><h3>Erro ao carregar materiais</h3></div>';
+      }
+    }
+
+    // Event listeners para fechar modal com ESC
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeModal();
+      }
+    });
+
+    // Click fora do modal para fechar
+    document.querySelectorAll('.modal').forEach(modal => {
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          closeModal();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
