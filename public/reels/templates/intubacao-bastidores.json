@@ -85,16 +85,18 @@
     }
   ],
   "post": {
-    "caption": "Errando no manequim pra não errar no paciente 🫁\n\nTreino de intubação orotraqueal em simulador: alinhar a cabeça, laringoscópio na mão esquerda, ver as cordas vocais, passar o tubo, insuflar o balonete e confirmar com capnografia e ausculta.\n\nCada erro aqui é um acerto lá. 💛\n\nE você, já errou no manequim? Me conta aqui 👇\n\nFonte: Frerk C et al. Difficult Airway Society 2015 guidelines. Br J Anaesth, 2015.\nConteúdo educativo, gravado em simulador. Não substitui formação supervisionada.",
+    "caption": "Errando no manequim pra não errar no paciente 🫁\n\nBastidores de um treino de intubação orotraqueal no simulador. Parece simples no vídeo, mas cada detalhe conta:\n\n1. Alinhar a cabeça (posição olfativa)\n2. Laringoscópio na mão esquerda\n3. Ver as cordas vocais\n4. Passar o tubo e insuflar o balonete\n5. Confirmar com capnografia e ausculta\n\nCada erro aqui é um acerto lá 💛\n\nE você, já errou no manequim? Me conta aqui 👇\n\nFonte: Frerk C et al. Difficult Airway Society 2015 guidelines. Br J Anaesth, 2015.\nGravado em simulador. Não substitui formação supervisionada.",
     "hashtags": [
       "#medicina",
       "#estudantedemedicina",
       "#intubacao",
       "#simulacaorealistica",
-      "#vidademedico",
       "#medstudent",
-      "#emergencia"
+      "#emergencia",
+      "#vidademedico"
     ],
-    "coverText": "ERRANDO NO MANEQUIM"
+    "coverText": "errando no manequim pra não errar no paciente",
+    "firstComment": "Qual procedimento vocês querem ver no próximo? 👀",
+    "altText": "Estudante de medicina treinando intubação orotraqueal em um manequim de vias aéreas, com laringoscópio, num evento de simulação. Texto: errando no manequim pra não errar no paciente."
   }
 }

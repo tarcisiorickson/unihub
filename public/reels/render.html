@@ -29,7 +29,7 @@
     window.setSpec = (s) => { spec = s; return ReelEngine.timeline(s).duration; };
     // media: { [índice da cena]: { base: URL da pasta de quadros, count } }
     window.setMedia = (m, f) => { media = m; fps = f; };
-    window.frameAt = async (t, type, quality) => {
+    window.frameAt = async (t, type, quality, extra) => {
       const imgs = {};
       for (const r of ReelEngine.mediaRequests(spec, t)) {
         const m = media[r.index];
@@ -37,7 +37,7 @@
         const idx = Math.min(m.count, Math.max(1, Math.floor(r.local * fps) + 1));
         imgs[r.index] = await loadImage(`${m.base}/f_${String(idx).padStart(5, '0')}.jpg`);
       }
-      ReelEngine.renderFrame(ctx, spec, t, { media: (i) => imgs[i] || null });
+      ReelEngine.renderFrame(ctx, spec, t, Object.assign({ media: (i) => imgs[i] || null }, extra));
       return ctx.canvas.toDataURL(type || 'image/png', quality);
     };
   </script>

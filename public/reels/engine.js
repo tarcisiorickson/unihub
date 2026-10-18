@@ -1296,8 +1296,11 @@
     }
     if (spec.film != null ? spec.film : look.film) drawFilm(ctx, t, 0.09);
 
-    if (spec.captions !== false) drawCaptions(ctx, look, cur.scene, lt, cur.duration);
-    drawChrome(ctx, look, spec, t, tl);
+    // capa: sem legenda nem barra de progresso
+    if (!opts.cover) {
+      if (spec.captions !== false) drawCaptions(ctx, look, cur.scene, lt, cur.duration);
+      drawChrome(ctx, look, spec, t, tl);
+    }
     if (opts.safeZone) drawSafeZone(ctx);
     ctx.restore();
   }

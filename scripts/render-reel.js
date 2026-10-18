@@ -149,7 +149,7 @@ async function main() {
   await page.evaluate(() => document.fonts.ready);
   await page.evaluate((s) => window.setSpec(s), spec);
   await page.evaluate(([m, f]) => window.setMedia(m, f), [media, args.fps]);
-  const frameAt = async (t, type, q) => dataUrlToBuffer(await page.evaluate(([tt, ty, qq]) => window.frameAt(tt, ty, qq), [t, type, q]));
+  const frameAt = async (t, type, q, extra) => dataUrlToBuffer(await page.evaluate(([tt, ty, qq, ex]) => window.frameAt(tt, ty, qq, ex), [t, type, q, extra || {}]));
 
   try {
     if (args.frame != null) {
@@ -161,7 +161,7 @@ async function main() {
 
     // capa (quadro do gancho) + folha de contato com o meio de cada cena
     const cover = out.replace(/\.mp4$/, '-capa.jpg');
-    fs.writeFileSync(cover, await frameAt(Math.min(tl.duration - 0.05, spec.coverAt != null ? spec.coverAt : 2.4), 'image/jpeg', 0.92));
+    fs.writeFileSync(cover, await frameAt(Math.min(tl.duration - 0.05, spec.coverAt != null ? spec.coverAt : 2.4), 'image/jpeg', 0.94, { cover: true }));
     const shots = tl.scenes.map((s) => s.start + s.duration * 0.72);
     for (let i = 0; i < shots.length; i++) fs.writeFileSync(path.join(tmp, `s${String(i).padStart(2, '0')}.png`), await frameAt(shots[i]));
     const sheet = out.replace(/\.mp4$/, '-folha.jpg');
@@ -184,7 +184,8 @@ async function main() {
     if (wav) ff.push('-i', wav);
     // CRF 17 com teto de 12 Mbps: nítido e num tamanho que o Instagram aceita sem recomprimir demais
     ff.push('-c:v', 'libx264', '-preset', 'medium', '-crf', '17', '-maxrate', '12M', '-bufsize', '24M', '-profile:v', 'high', '-level', '4.2', '-pix_fmt', 'yuv420p', '-r', String(args.fps));
-    if (wav) ff.push('-af', `${MASTER},${await loudnormFilter(wav)}`, '-c:a', 'aac', '-b:a', '192k', '-ar', '44100', '-ac', '2', '-shortest');
+    // limitador depois do loudnorm: o encoder AAC pode passar de 0 dBFS
+    if (wav) ff.push('-af', `${MASTER},${await loudnormFilter(wav)},alimiter=limit=0.79:attack=2:release=60:level=false`, '-c:a', 'aac', '-b:a', '192k', '-ar', '44100', '-ac', '2', '-shortest');
     ff.push('-movflags', '+faststart', out);
 
     const started = Date.now();
