@@ -9,158 +9,72 @@
   "film": true,
   "coverAt": 7.2,
   "footageFilter": "curves=r='0/0.05 0.3/0.33 0.7/0.76 1/0.98':g='0/0.04 0.5/0.51 1/0.95':b='0/0.09 0.5/0.47 1/0.86',eq=contrast=1.06:saturation=1.1",
-  "sound": {
-    "enabled": false
-  },
-  "datestamp": {
-    "text": "10 18 '26",
-    "x": 0.84,
-    "y": 0.6
-  },
+  "sound": { "enabled": false },
   "scenes": [
     {
       "type": "vlog",
       "duration": 1.614,
-      "media": {
-        "src": "ddm-selfie-pijama.mp4",
-        "from": 1.9,
-        "speed": 0.5,
-        "dim": 0,
-        "zoom": 1.02,
-        "grade": "none"
-      }
+      "media": { "src": "ddm-selfie-pijama.mp4", "from": 0, "dim": 0, "zoom": 1, "grade": "none" }
     },
     {
       "type": "vlog",
       "duration": 0.952,
-      "media": {
-        "src": "ddm-diu-bruto.mp4",
-        "from": 17.5,
-        "dim": 0,
-        "zoom": 1.02,
-        "grade": "none"
-      }
+      "media": { "src": "ddm-diu-bruto.mp4", "from": 17.5, "dim": 0, "zoom": 1, "grade": "none" }
     },
     {
       "type": "vlog",
       "duration": 0.952,
-      "media": {
-        "src": "intubacao-bruto.mp4",
-        "from": 4.0,
-        "dim": 0,
-        "zoom": 1.02,
-        "grade": "none"
-      }
+      "media": { "src": "intubacao-bruto.mp4", "from": 4.0, "dim": 0, "zoom": 1, "grade": "none" }
     },
     {
       "type": "vlog",
       "duration": 0.952,
-      "media": {
-        "src": "ddm-jaleco-estudando.mp4",
-        "from": 0.3,
-        "dim": 0,
-        "zoom": 1.02,
-        "grade": "none"
-      }
+      "media": { "src": "ddm-jaleco-estudando.mp4", "from": 0.3, "dim": 0, "zoom": 1, "grade": "none" }
     },
     {
       "type": "vlog",
       "duration": 0.952,
-      "media": {
-        "src": "ddm-diu-bruto.mp4",
-        "from": 201.5,
-        "dim": 0,
-        "zoom": 1.02,
-        "grade": "none"
-      }
+      "media": { "src": "ddm-diu-bruto.mp4", "from": 201.5, "dim": 0, "zoom": 1, "grade": "none" }
     },
     {
       "type": "vlog",
       "duration": 0.952,
-      "media": {
-        "src": "ddm-diu-bruto.mp4",
-        "from": 139.5,
-        "dim": 0,
-        "zoom": 1.02,
-        "grade": "none"
-      }
+      "media": { "src": "ddm-diu-bruto.mp4", "from": 139.5, "dim": 0, "zoom": 1, "grade": "none" }
     },
     {
       "type": "vlog",
       "duration": 1.904,
-      "media": {
-        "src": "ddm-extra.mp4",
-        "from": 0.6,
-        "dim": 0,
-        "zoom": 1.02,
-        "grade": "none"
-      }
+      "media": { "src": "ddm-extra.mp4", "from": 0.6, "dim": 0, "zoom": 1, "grade": "none" }
     },
     {
       "type": "vlog",
       "duration": 0.952,
-      "media": {
-        "src": "intubacao-bruto.mp4",
-        "from": 14.0,
-        "dim": 0,
-        "zoom": 1.02,
-        "grade": "none"
-      }
+      "media": { "src": "intubacao-bruto.mp4", "from": 14.0, "dim": 0, "zoom": 1, "grade": "none" }
     },
     {
       "type": "vlog",
       "duration": 0.952,
-      "media": {
-        "src": "ddm-jaleco-estudando.mp4",
-        "from": 1.9,
-        "dim": 0,
-        "zoom": 1.02,
-        "grade": "none"
-      }
+      "media": { "src": "ddm-jaleco-estudando.mp4", "from": 1.9, "dim": 0, "zoom": 1, "grade": "none" }
     },
     {
       "type": "vlog",
       "duration": 0.952,
-      "media": {
-        "src": "ddm-diu-bruto.mp4",
-        "from": 61.2,
-        "dim": 0,
-        "zoom": 1.02,
-        "grade": "none"
-      }
+      "media": { "src": "ddm-diu-bruto.mp4", "from": 61.2, "dim": 0, "zoom": 1, "grade": "none" }
     },
     {
       "type": "vlog",
       "duration": 0.952,
-      "media": {
-        "src": "intubacao-editado.mp4",
-        "from": 49,
-        "dim": 0,
-        "zoom": 1.02,
-        "grade": "none"
-      }
+      "media": { "src": "intubacao-editado.mp4", "from": 49, "dim": 0, "zoom": 1, "grade": "none" }
     },
     {
       "type": "vlog",
       "duration": 0.952,
-      "media": {
-        "src": "ddm-diu-bruto.mp4",
-        "from": 208.4,
-        "dim": 0,
-        "zoom": 1.02,
-        "grade": "none"
-      }
+      "media": { "src": "ddm-diu-bruto.mp4", "from": 208.4, "dim": 0, "zoom": 1, "grade": "none" }
     },
     {
       "type": "vlog",
       "duration": 2.472,
-      "media": {
-        "src": "ddm-diu-bruto.mp4",
-        "from": 67.3,
-        "dim": 0,
-        "zoom": 1.02,
-        "grade": "none"
-      }
+      "media": { "src": "ddm-diu-bruto.mp4", "from": 67.3, "dim": 0, "zoom": 1, "grade": "none" }
     }
   ],
   "post": {
