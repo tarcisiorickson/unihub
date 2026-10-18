@@ -75,7 +75,8 @@
     myth: 'Mito × Verdade',
     recap: 'Resumo (sigla)',
     cta: 'Chamada (salvar/seguir)',
-    clip: 'Vídeo seu + adesivos'
+    clip: 'Vídeo seu + adesivos',
+    vlog: 'Vlog (só o vídeo, corte seco)'
   };
 
   // ---------- utilidades ----------
@@ -1064,6 +1065,43 @@
     ctx.restore();
   }
 
+  // vlog: só o vídeo (o texto fixo do roteiro e os adesivos são desenhados por cima)
+  renderers.vlog = function () {};
+
+  // texto fixo no estilo nativo do Instagram, igual em todas as cenas
+  function drawOverlayText(ctx, spec) {
+    const o = spec.overlay;
+    if (!o || !o.lines) return;
+    let y = (o.y != null ? o.y : 0.68) * H;
+    ctx.save();
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    ctx.shadowColor = 'rgba(0,0,0,0.55)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 2;
+    o.lines.forEach((l) => {
+      const size = l.size || 40;
+      y += l.gap || 0;
+      ctx.font = `${l.weight || 600} ${size}px ${SANS}`;
+      ctx.fillStyle = l.color || '#ffffff';
+      ctx.fillText(l.text, o.x != null ? o.x * W : W / 2, y);
+      y += size * 1.22;
+    });
+    ctx.restore();
+  }
+
+  // carimbo de data laranja de câmera descartável (retrô americano)
+  function drawDateStamp(ctx, spec) {
+    const d = spec.datestamp;
+    if (!d || !d.text) return;
+    ctx.save();
+    ctx.font = `700 ${d.size || 46}px "DejaVu Sans Mono", "Courier New", monospace`;
+    ctx.textAlign = 'right'; ctx.textBaseline = 'alphabetic';
+    if ('letterSpacing' in ctx) ctx.letterSpacing = '4px';
+    ctx.fillStyle = d.color || '#ff9a3c';
+    ctx.shadowColor = 'rgba(255,120,30,0.85)'; ctx.shadowBlur = 14;
+    ctx.globalAlpha = 0.92;
+    ctx.fillText(d.text, (d.x != null ? d.x : 0.84) * W, (d.y != null ? d.y : 0.71) * H);
+    ctx.restore();
+  }
+
   renderers.clip = function (ctx, look, s, t, d) {
     let y = 300;
     let flowerSpot = null;
@@ -1253,14 +1291,17 @@
     const tl = timeline(spec);
     t = clamp(t, 0, Math.max(0, tl.duration - 1e-4));
     ctx.save();
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    // o layout é sempre 1080x1920; canvas maior (ex.: 4K) só multiplica a escala
+    const k = ctx.canvas.width / W;
+    ctx.setTransform(k, 0, 0, k, 0, 0);
     ctx.clearRect(0, 0, W, H);
     drawBackground(ctx, look, t, spec);
     if (!tl.scenes.length) { ctx.restore(); return; }
 
     const cur = sceneAt(tl, t);
     const lt = t - cur.start;
-    const prev = cur.index > 0 ? tl.scenes[cur.index - 1] : null;
+    // corte seco (vlog): sem transição animada entre as cenas
+    const prev = cur.index > 0 && spec.transition !== 'cut' ? tl.scenes[cur.index - 1] : null;
     const tp = prev ? easeInOutCubic(prog(lt, 0, TRANSITION)) : 1;
 
     // punch zoom + tremor no início de cenas de impacto
@@ -1299,9 +1340,11 @@
     if (spec.film != null ? spec.film : look.film) drawFilm(ctx, t, 0.09);
 
     // capa: sem legenda nem barra de progresso
+    drawOverlayText(ctx, spec);
+    drawDateStamp(ctx, spec);
     if (!opts.cover) {
       if (spec.captions !== false) drawCaptions(ctx, look, cur.scene, lt, cur.duration);
-      drawChrome(ctx, look, spec, t, tl);
+      if (spec.chrome !== false) drawChrome(ctx, look, spec, t, tl);
     }
     if (opts.safeZone) drawSafeZone(ctx);
     ctx.restore();
@@ -1321,7 +1364,7 @@
       if (m) out.push({ index: item.index, local: local * sp, src: m.src, time: (Number(m.from) || 0) + local * sp });
     };
     req(cur, lt);
-    const prev = cur.index > 0 ? tl.scenes[cur.index - 1] : null;
+    const prev = cur.index > 0 && spec.transition !== 'cut' ? tl.scenes[cur.index - 1] : null;
     if (prev && lt < TRANSITION) req(prev, prev.duration);
     return out;
   }

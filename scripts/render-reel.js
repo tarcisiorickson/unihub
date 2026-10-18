@@ -80,6 +80,9 @@ const MEDIA_DIR = path.join(ROOT, 'reels/media');
 // Extrai, para cada cena com vídeo, os quadros do trecho usado (já rotacionados pelo ffmpeg).
 async function extractMedia(spec, tl, tmp, fps) {
   const out = {};
+  const [tw, th] = spec.output === '4k' ? [2160, 3840] : [1080, 1920];
+  // filtro extra do roteiro (ex.: tom de filme) aplicado no vídeo, antes do texto
+  const extra = spec.footageFilter ? `,${spec.footageFilter}` : '';
   for (const item of tl.scenes) {
     const m = Engine.effectiveMedia(spec, item);
     if (!m) continue;
@@ -92,7 +95,7 @@ async function extractMedia(spec, tl, tmp, fps) {
     fs.mkdirSync(dir);
     await run('ffmpeg', ['-loglevel', 'error', '-ss', String(Number(m.from) || 0), '-t', String(item.duration * (Number(m.speed) || 1) + 0.6), '-i', src,
       // já no tamanho final (cobre 1080x1920), ampliação lanczos e nitidez leve contra a compressão do WhatsApp
-      '-vf', `fps=${fps},scale=1080:1920:force_original_aspect_ratio=increase:flags=lanczos,unsharp=5:5:0.55:5:5:0`, '-q:v', '2', path.join(dir, 'f_%05d.jpg')]);
+      '-vf', `fps=${fps},hqdn3d=1.2:1.2:4:4,scale=${tw}:${th}:force_original_aspect_ratio=increase:flags=lanczos,${spec.output === '4k' ? 'cas=0.6' : 'unsharp=5:5:0.55:5:5:0'}${extra}`, '-q:v', '2', path.join(dir, 'f_%05d.jpg')]);
     const count = fs.readdirSync(dir).length;
     if (count) out[item.index] = { base: `/media/m${item.index}`, count };
   }
@@ -173,7 +176,12 @@ async function main() {
     if (args.sheet) return;
 
     let wav = null;
-    if (args.audio && !(spec.sound && spec.sound.enabled === false)) {
+    const track = spec.sound && spec.sound.track ? path.join(MEDIA_DIR, spec.sound.track) : null;
+    if (track && args.audio) {
+      // música escolhida pela criadora (ex.: a mesma da referência), cortada no fim do vídeo
+      wav = track;
+      console.log(`trilha: ${spec.sound.track}`);
+    } else if (args.audio && !(spec.sound && spec.sound.enabled === false)) {
       wav = path.join(tmp, 'trilha.wav');
       const mix = Sound.render(spec, 44100, { media: await extractMediaAudio(spec, tl) });
       fs.writeFileSync(wav, Buffer.from(Sound.toWav(mix, 44100)));
@@ -181,18 +189,20 @@ async function main() {
     }
 
     const total = Math.round(tl.duration * args.fps);
-    const ff = ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(args.fps), '-c:v', 'png', '-i', '-'];
+    const uhd = spec.output === '4k';
+    const ff = ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(args.fps), '-c:v', uhd ? 'mjpeg' : 'png', '-i', '-'];
     if (wav) ff.push('-i', wav);
     // CRF 17 com teto de 12 Mbps: nítido e num tamanho que o Instagram aceita sem recomprimir demais
-    ff.push('-c:v', 'libx264', '-preset', 'medium', '-crf', '17', '-maxrate', '12M', '-bufsize', '24M', '-profile:v', 'high', '-level', '4.2', '-pix_fmt', 'yuv420p', '-r', String(args.fps));
+    ff.push('-c:v', 'libx264', '-preset', 'medium', '-crf', '17', '-maxrate', uhd ? '40M' : '12M', '-bufsize', uhd ? '80M' : '24M', '-profile:v', 'high', '-level', uhd ? '5.1' : '4.2', '-pix_fmt', 'yuv420p', '-r', String(args.fps));
     // limitador depois do loudnorm: o encoder AAC pode passar de 0 dBFS
-    if (wav) ff.push('-af', `${MASTER},${await loudnormFilter(wav)},alimiter=limit=0.79:attack=2:release=60:level=false`, '-c:a', 'aac', '-b:a', '192k', '-ar', '44100', '-ac', '2', '-shortest');
+    if (wav && track) ff.push('-af', `atrim=0:${tl.duration.toFixed(3)},afade=t=out:st=${Math.max(0, tl.duration - 0.5).toFixed(3)}:d=0.5,alimiter=limit=0.89:level=false`, '-c:a', 'aac', '-b:a', '256k', '-ar', '44100', '-ac', '2', '-shortest');
+    else if (wav) ff.push('-af', `${MASTER},${await loudnormFilter(wav)},alimiter=limit=0.79:attack=2:release=60:level=false`, '-c:a', 'aac', '-b:a', '192k', '-ar', '44100', '-ac', '2', '-shortest');
     ff.push('-movflags', '+faststart', out);
 
     const started = Date.now();
     await run('ffmpeg', ff, async (stdin) => {
       for (let f = 0; f < total; f++) {
-        const buf = await frameAt(f / args.fps);
+        const buf = uhd ? await frameAt(f / args.fps, 'image/jpeg', 0.95) : await frameAt(f / args.fps);
         if (!stdin.write(buf)) await new Promise((r) => stdin.once('drain', r));
         if (args.progress && (f % args.fps === 0 || f === total - 1)) {
           process.stdout.write(`\rrenderizando ${f + 1}/${total} quadros (${Math.round(((f + 1) / total) * 100)}%)`);
@@ -200,6 +210,12 @@ async function main() {
       }
       stdin.end();
     });
+    if (track) {
+      // versão sem música, para usar o áudio original pelo próprio Instagram ("Usar áudio")
+      const mute = out.replace(/\.mp4$/, '-sem-musica.mp4');
+      await run('ffmpeg', ['-y', '-loglevel', 'error', '-i', out, '-c:v', 'copy', '-an', '-movflags', '+faststart', mute]);
+      console.log(`sem música: ${path.relative(ROOT, mute)}`);
+    }
     const mb = (fs.statSync(out).size / 1048576).toFixed(1);
     console.log(`\nvídeo: ${path.relative(ROOT, out)} (${tl.duration.toFixed(1)}s, ${mb} MB, ${((Date.now() - started) / 1000).toFixed(0)}s de render)`);
   } finally {

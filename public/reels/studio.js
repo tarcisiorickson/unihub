@@ -9,7 +9,8 @@
   const TEMPLATES = [
     { name: 'avc-samu', label: 'Modelo: AVC — sigla SAMU', url: 'templates/avc-samu.json' },
     { name: 'intubacao-bastidores', label: 'Modelo: bastidores da intubação (vídeo próprio)', url: 'templates/intubacao-bastidores.json' },
-    { name: 'diu-mitos', label: 'Modelo: DIU — mitos e verdades (vídeo próprio)', url: 'templates/diu-mitos.json' }
+    { name: 'diu-mitos', label: 'Modelo: DIU — mitos e verdades (vídeo próprio)', url: 'templates/diu-mitos.json' },
+    { name: 'dia-dos-medicos', label: 'Modelo: Dia dos Médicos (vlog com corte seco, 4K)', url: 'templates/dia-dos-medicos.json' }
   ];
   const ICONS = ['', 'brain', 'heart', 'smile', 'arms', 'speech', 'phone', 'clock', 'alert', 'check', 'x', 'bookmark', 'send'];
   const TYPE_COLORS = { hook: '#ff3b5c', stat: '#f5a524', step: '#7c6cff', list: '#3fa7ff', myth: '#e8505b', recap: '#2ecc8f', cta: '#d62976', clip: '#b5c42f' };

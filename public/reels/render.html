@@ -26,7 +26,12 @@
       return img;
     }
 
-    window.setSpec = (s) => { spec = s; return ReelEngine.timeline(s).duration; };
+    window.setSpec = (s) => {
+      spec = s;
+      const k = s.output === '4k' ? 2 : 1;
+      ctx.canvas.width = 1080 * k; ctx.canvas.height = 1920 * k;
+      return ReelEngine.timeline(s).duration;
+    };
     // media: { [índice da cena]: { base: URL da pasta de quadros, count } }
     window.setMedia = (m, f) => { media = m; fps = f; };
     window.frameAt = async (t, type, quality, extra) => {
