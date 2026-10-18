@@ -31,6 +31,10 @@ description: Cria Reels verticais (1080x1920) de medicina com o Estúdio de Reel
 5. **Render**: `node scripts/render-reel.js <roteiro.json>` (cerca de 3 min para 30 s). Master: corte de subgrave,
    presença em 3 kHz, compressor, limitador e loudnorm -14 LUFS. Mixe para celular: pouco abaixo de 150 Hz.
    Não reaproveite música de vídeos já editados (direitos autorais); use o som ambiente do vídeo bruto.
+5b. **4K com IA** (opcional, lento em CPU ~8 s/quadro): `pip install onnx onnxruntime numpy` e
+   `python3 scripts/upscale-video.py <vídeo> --start S --duration D --denoise 0.5 --out reels/media/sr/x.mp4`
+   (Real-ESRGAN realesr-general-x4v3 via ONNX Runtime; remove blocos de compressão e reconstrói detalhes).
+   Use o trecho gerado com `"media": {"src": "sr/x.mp4", "from": 0, "enhanced": true}`.
 6. **Post**: preencha `post.caption` (gancho, valor, CTA, fontes, aviso) e `post.hashtags` (3–10).
    O checklist do Estúdio deve chegar a 100.
 

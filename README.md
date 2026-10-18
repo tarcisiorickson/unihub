@@ -21,6 +21,8 @@ Editor de Reels 9:16 para conteúdo de medicina, em `/reels/studio.html` (botão
 node scripts/render-reel.js public/reels/templates/avc-samu.json
 ```
 
-Requer `ffmpeg` e Playwright com Chromium. Vídeos enviados ficam em `reels/media/` e os renders em `reels/out/`
+Requer `ffmpeg` e Playwright com Chromium. Para 4K com IA (Real-ESRGAN via ONNX Runtime, só CPU):
+`python3 scripts/upscale-video.py video.mp4 --out video-4k.mp4` (precisa de `pip install onnx onnxruntime numpy`).
+ Vídeos enviados ficam em `reels/media/` e os renders em `reels/out/`
 (os dois fora do git). Prompt para criar novos Reels: `docs/reels/PROMPT-REEL-MEDICINA.md`.
 Pesquisa de referência: `docs/reels/PESQUISA.md`.

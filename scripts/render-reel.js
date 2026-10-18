@@ -95,7 +95,11 @@ async function extractMedia(spec, tl, tmp, fps) {
     fs.mkdirSync(dir);
     await run('ffmpeg', ['-loglevel', 'error', '-ss', String(Number(m.from) || 0), '-t', String(item.duration * (Number(m.speed) || 1) + 0.6), '-i', src,
       // já no tamanho final (cobre 1080x1920), ampliação lanczos e nitidez leve contra a compressão do WhatsApp
-      '-vf', `fps=${fps},hqdn3d=1.2:1.2:4:4,scale=${tw}:${th}:force_original_aspect_ratio=increase:flags=lanczos,${spec.output === '4k' ? 'cas=0.6' : 'unsharp=5:5:0.55:5:5:0'}${extra}`, '-q:v', '2', path.join(dir, 'f_%05d.jpg')]);
+      // media.enhanced: trecho já ampliado com IA (scripts/upscale-video.py) — sem nova limpeza/nitidez
+      '-vf', m.enhanced
+        ? `fps=${fps},scale=${tw}:${th}:force_original_aspect_ratio=increase:flags=lanczos${extra}`
+        : `fps=${fps},hqdn3d=1.2:1.2:4:4,scale=${tw}:${th}:force_original_aspect_ratio=increase:flags=lanczos,${spec.output === '4k' ? 'cas=0.6' : 'unsharp=5:5:0.55:5:5:0'}${extra}`,
+      '-q:v', '2', path.join(dir, 'f_%05d.jpg')]);
     const count = fs.readdirSync(dir).length;
     if (count) out[item.index] = { base: `/media/m${item.index}`, count };
   }
