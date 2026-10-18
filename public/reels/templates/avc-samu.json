@@ -6,21 +6,15 @@
   "coverAt": 2.6,
   "sound": {
     "enabled": true,
-    "bpm": 84,
-    "heartbeat": true,
-    "pad": true,
-    "sfx": true
+    "music": true,
+    "sfx": true,
+    "heartbeat": true
   },
   "scenes": [
     {
       "type": "hook",
       "duration": 3.2,
-      "media": {
-        "src": "intubacao-bruto.mp4",
-        "from": 20,
-        "dim": 0.62,
-        "grade": "none"
-      },
+      "media": { "src": "intubacao-bruto.mp4", "from": 20, "dim": 0.62, "grade": "none", "audio": 0.18 },
       "kicker": "Medicina em 30s",
       "text": "4 letras que podem salvar a vida de quem você ama",
       "highlight": [
@@ -144,12 +138,7 @@
     {
       "type": "cta",
       "duration": 4.4,
-      "media": {
-        "src": "intubacao-bruto.mp4",
-        "from": 24,
-        "dim": 0.66,
-        "grade": "none"
-      },
+      "media": { "src": "intubacao-bruto.mp4", "from": 24, "dim": 0.66, "grade": "none", "audio": 0.18 },
       "text": "Salve e envie para alguém que você ama",
       "highlight": [
         "envie"

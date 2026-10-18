@@ -55,11 +55,14 @@ function run(cmd, cmdArgs, input) {
   });
 }
 
-// loudnorm em duas passagens: mede a trilha e aplica correção linear até -14 LUFS / -1,5 dBTP
+// master: corta subgrave inútil no celular, dá presença, comprime e limita
+const MASTER = 'highpass=f=30,lowshelf=f=110:g=-3,equalizer=f=3000:t=q:w=1:g=3,acompressor=threshold=-16dB:ratio=3:attack=8:release=150:makeup=2,alimiter=limit=0.85:level=false';
+
+// loudnorm em duas passagens: mede a trilha masterizada e aplica correção linear até -14 LUFS / -1,5 dBTP
 function loudnormFilter(wav) {
   const target = 'I=-14:TP=-1.5:LRA=11';
   return new Promise((resolve) => {
-    const p = spawn('ffmpeg', ['-hide_banner', '-i', wav, '-af', `loudnorm=${target}:print_format=json`, '-f', 'null', '-']);
+    const p = spawn('ffmpeg', ['-hide_banner', '-i', wav, '-af', `${MASTER},loudnorm=${target}:print_format=json`, '-f', 'null', '-']);
     let err = '';
     p.stderr.on('data', (d) => { err += d; });
     p.on('close', () => {
@@ -91,6 +94,26 @@ async function extractMedia(spec, tl, tmp, fps) {
       '-vf', `fps=${fps},scale=-2:1280`, '-q:v', '3', path.join(dir, 'f_%05d.jpg')]);
     const count = fs.readdirSync(dir).length;
     if (count) out[item.index] = { base: `/media/m${item.index}`, count };
+  }
+  return out;
+}
+
+// Som original das cenas com vídeo (media.audio > 0): filtrado, sem ruído de fundo e nivelado.
+async function extractMediaAudio(spec, tl) {
+  const out = {};
+  for (const item of tl.scenes) {
+    const m = item.scene.media;
+    if (!m || !m.src || !(Number(m.audio) > 0)) continue;
+    const src = path.isAbsolute(m.src) ? m.src : path.join(MEDIA_DIR, m.src);
+    if (!fs.existsSync(src)) continue;
+    const pcm = await new Promise((resolve, reject) => {
+      const p = spawn('ffmpeg', ['-loglevel', 'error', '-ss', String(Number(m.from) || 0), '-t', String(item.duration), '-i', src, '-vn',
+        '-af', 'highpass=f=120,lowpass=f=9000,afftdn=nf=-28,dynaudnorm=f=250:g=15:p=0.7', '-ac', '1', '-ar', '44100', '-f', 'f32le', '-']);
+      const chunks = [];
+      p.stdout.on('data', (d) => chunks.push(d));
+      p.on('close', (code) => (code === 0 ? resolve(Buffer.concat(chunks)) : reject(new Error('falha ao extrair áudio de ' + m.src))));
+    });
+    out[item.index] = new Float32Array(pcm.buffer, pcm.byteOffset, Math.floor(pcm.length / 4));
   }
   return out;
 }
@@ -150,14 +173,16 @@ async function main() {
     let wav = null;
     if (args.audio && !(spec.sound && spec.sound.enabled === false)) {
       wav = path.join(tmp, 'trilha.wav');
-      fs.writeFileSync(wav, Buffer.from(Sound.toWav(Sound.render(spec, 44100), 44100)));
+      const mix = Sound.render(spec, 44100, { media: await extractMediaAudio(spec, tl) });
+      fs.writeFileSync(wav, Buffer.from(Sound.toWav(mix, 44100)));
+      console.log(`trilha: ${Sound.STYLES[mix.style].name}, ${mix.bpm} BPM`);
     }
 
     const total = Math.round(tl.duration * args.fps);
     const ff = ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(args.fps), '-c:v', 'png', '-i', '-'];
     if (wav) ff.push('-i', wav);
     ff.push('-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-r', String(args.fps));
-    if (wav) ff.push('-af', await loudnormFilter(wav), '-c:a', 'aac', '-b:a', '192k', '-ar', '44100', '-shortest');
+    if (wav) ff.push('-af', `${MASTER},${await loudnormFilter(wav)}`, '-c:a', 'aac', '-b:a', '192k', '-ar', '44100', '-ac', '2', '-shortest');
     ff.push('-movflags', '+faststart', out);
 
     const started = Date.now();

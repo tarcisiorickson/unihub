@@ -25,7 +25,7 @@
     clip: [['title', 'Título grande', 'textarea'], ['subtitle', 'Subtítulo (com estrelas)', 'text'], ['highlight', 'Destaques (vírgula)', 'list'], ['search.text', 'Barra de pesquisa (digitando)', 'text'], ['stickers', 'Adesivos: texto ; x ; y ; seta (left/right/none) ; up — um por linha', 'stickers'], ['shout', 'Grito na tela (ex.: SPOILER)', 'text']]
   };
   const COMMON = [['duration', 'Duração (s)', 'number'], ['caption', 'Legenda palavra a palavra', 'text'], ['captionDelay', 'Atraso da legenda (s, vazio = automático)', 'number'],
-    ['media.src', 'Seu vídeo de fundo', 'media'], ['media.from', 'Começar o vídeo em (s)', 'number'], ['media.dim', 'Escurecer vídeo (0–1)', 'number'], ['media.zoom', 'Zoom lento até (ex.: 1.1)', 'number'], ['media.grade', 'Tom do vídeo', 'grade']];
+    ['media.src', 'Seu vídeo de fundo', 'media'], ['media.from', 'Começar o vídeo em (s)', 'number'], ['media.dim', 'Escurecer vídeo (0–1)', 'number'], ['media.zoom', 'Zoom lento até (ex.: 1.1)', 'number'], ['media.grade', 'Tom do vídeo', 'grade'], ['media.audio', 'Som original do vídeo (0 = mudo, 1 = cheio)', 'number']];
   const GRADES = [['', 'automático'], ['none', 'original'], ['warm', 'dourado (retrô)'], ['bw', 'preto e branco']];
 
   const DEFAULT_SCENES = {
@@ -93,7 +93,11 @@
     $('fHandle').value = spec.handle || '';
     $('fCaptions').checked = spec.captions !== false;
     $('fSound').checked = spec.sound.enabled !== false;
-    $('fBpm').value = spec.sound.bpm || 76;
+    $('fStyle').innerHTML = '<option value="">Automático (pelo look)</option>' +
+      Object.entries(ReelSound.STYLES).map(([k, v]) => `<option value="${k}" ${spec.sound.style === k ? 'selected' : ''}>${v.name} · ${v.bpm} BPM</option>`).join('') +
+      `<option value="none" ${spec.sound.music === false ? 'selected' : ''}>Sem música (só efeitos)</option>`;
+    $('fBpm').value = spec.sound.bpm || '';
+    $('fMusicVol').value = spec.sound.musicVolume != null ? spec.sound.musicVolume : 1;
     $('fPost').value = spec.post.caption || '';
     $('fTags').value = (spec.post.hashtags || []).join(' ');
     renderLooks();
@@ -286,6 +290,9 @@
     let target = (Number(m.from) || 0) + local;
     if (v.duration) target = Math.min(target, v.duration - 0.05);
     const isFrozen = local >= ReelEngine.timeline(spec).scenes[index].duration - 0.01;
+    const vol = Math.min(1, Math.max(0, Number(m.audio) || 0));
+    v.muted = !(vol > 0 && playing && !isFrozen && spec.sound.enabled !== false);
+    v.volume = vol;
     if (playing && !isFrozen) {
       if (v.paused) v.play().catch(() => {});
       if (Math.abs(v.currentTime - target) > 0.3) v.currentTime = target;
@@ -362,9 +369,10 @@
     if (!audio.ctx) audio.ctx = new (window.AudioContext || window.webkitAudioContext)();
     if (audio.dirty || !audio.buffer) {
       const sr = audio.ctx.sampleRate;
-      const data = ReelSound.render(spec, sr);
-      audio.buffer = audio.ctx.createBuffer(1, Math.max(1, data.length), sr);
-      audio.buffer.copyToChannel(data, 0);
+      const mix = ReelSound.render(spec, sr);
+      audio.buffer = audio.ctx.createBuffer(2, Math.max(1, mix.left.length), sr);
+      audio.buffer.copyToChannel(mix.left, 0);
+      audio.buffer.copyToChannel(mix.right, 1);
       audio.dirty = false;
     }
   }
@@ -480,7 +488,15 @@
     $('fHandle').addEventListener('input', (e) => { spec.handle = e.target.value; });
     $('fCaptions').addEventListener('change', (e) => { spec.captions = e.target.checked; changed(); });
     $('fSound').addEventListener('change', (e) => { spec.sound.enabled = e.target.checked; changed(); if (!e.target.checked) stopAudio(); else restartAudio(); });
-    $('fBpm').addEventListener('input', (e) => { spec.sound.bpm = Number(e.target.value) || 76; changed(); });
+    $('fBpm').addEventListener('input', (e) => { if (e.target.value) spec.sound.bpm = Number(e.target.value); else delete spec.sound.bpm; changed(); });
+    $('fStyle').addEventListener('change', (e) => {
+      const v = e.target.value;
+      spec.sound.music = v !== 'none';
+      if (v && v !== 'none') spec.sound.style = v; else delete spec.sound.style;
+      changed(); restartAudio();
+    });
+    $('fMusicVol').addEventListener('change', (e) => { spec.sound.musicVolume = Number(e.target.value); changed(); restartAudio(); });
+    $('looks').addEventListener('click', () => { if (!spec.sound.style) { audio.dirty = true; restartAudio(); } });
     $('fPost').addEventListener('input', (e) => { spec.post.caption = e.target.value; renderChecklist(); });
     $('fTags').addEventListener('input', (e) => { spec.post.hashtags = e.target.value.split(/[\s,]+/).filter(Boolean).map((t) => (t.startsWith('#') ? t : '#' + t)); renderChecklist(); });
     $('looks').addEventListener('click', (e) => { const l = e.target.closest('.look'); if (l) { spec.look = l.dataset.look; renderLooks(); } });
