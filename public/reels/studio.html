@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UniHub · Estúdio de Reels</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&display=swap">
+  <link rel="stylesheet" href="studio.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/">UniHub <span>Estúdio de Reels</span></a>
+    <div class="top-actions">
+      <select id="templateSelect" title="Carregar modelo"></select>
+      <button class="btn ghost" id="importBtn" title="Importar roteiro JSON">Importar</button>
+      <button class="btn ghost" id="exportBtn" title="Baixar roteiro JSON">Exportar JSON</button>
+      <button class="btn ghost" id="saveBtn" title="Salvar no servidor do UniHub">Salvar</button>
+      <button class="btn" id="recordBtn" title="Grava a pré-visualização em WebM no navegador">Gravar WebM</button>
+      <button class="btn primary" id="renderBtn" title="Renderiza MP4 1080x1920 no servidor">Renderizar MP4</button>
+      <input type="file" id="importFile" accept="application/json" hidden>
+      <input type="file" id="videoFile" accept="video/*" hidden>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <!-- Coluna 1: projeto + cenas -->
+    <aside class="panel left">
+      <section class="block">
+        <h2>Projeto</h2>
+        <label>Título<input id="fTitle" type="text"></label>
+        <label>Perfil<input id="fHandle" type="text" placeholder="@seu.perfil"></label>
+        <div class="field-label">Look</div>
+        <div class="looks" id="looks"></div>
+        <div class="toggles">
+          <label class="switch"><input type="checkbox" id="fCaptions"><span>Legendas</span></label>
+          <label class="switch"><input type="checkbox" id="fSafe"><span>Zona segura</span></label>
+          <label class="switch"><input type="checkbox" id="fSound"><span>Som</span></label>
+        </div>
+        <label>Batimento (BPM)<input id="fBpm" type="number" min="40" max="160" step="1"></label>
+      </section>
+
+      <section class="block">
+        <div class="block-head">
+          <h2>Cenas</h2>
+          <div class="add-scene">
+            <select id="newSceneType"></select>
+            <button class="btn small" id="addScene">+ Cena</button>
+          </div>
+        </div>
+        <ol class="scene-list" id="sceneList"></ol>
+      </section>
+
+      <section class="block" id="sceneEditor"></section>
+    </aside>
+
+    <!-- Coluna 2: pré-visualização -->
+    <section class="stage">
+      <div class="phone">
+        <canvas id="preview" width="1080" height="1920"></canvas>
+      </div>
+      <div class="transport">
+        <button class="btn round" id="playBtn" aria-label="Reproduzir">▶</button>
+        <span class="time" id="timeLabel">0,0 / 0,0 s</span>
+        <label class="switch compact"><input type="checkbox" id="fLoop" checked><span>Loop</span></label>
+      </div>
+      <div class="timeline" id="timeline">
+        <div class="track" id="track"></div>
+        <div class="playhead" id="playhead"></div>
+      </div>
+      <p class="hint">Espaço: play/pausa · ←/→: ±0,1 s · clique na linha do tempo para navegar</p>
+    </section>
+
+    <!-- Coluna 3: checklist + post -->
+    <aside class="panel right">
+      <section class="block">
+        <div class="block-head">
+          <h2>Checklist viral</h2>
+          <span class="score" id="score">0</span>
+        </div>
+        <div class="meter"><div id="scoreBar"></div></div>
+        <ul class="checklist" id="checklist"></ul>
+      </section>
+      <section class="block">
+        <div class="block-head">
+          <h2>Legenda do post</h2>
+          <button class="btn small ghost" id="copyPost">Copiar</button>
+        </div>
+        <textarea id="fPost" rows="9"></textarea>
+        <label>Hashtags<input id="fTags" type="text" placeholder="#medicina #saude"></label>
+      </section>
+      <section class="block">
+        <h2>Status</h2>
+        <div id="status" class="status">Pronto.</div>
+      </section>
+    </aside>
+  </main>
+
+  <script src="engine.js"></script>
+  <script src="soundtrack.js"></script>
+  <script src="studio.js"></script>
+</body>
+</html>

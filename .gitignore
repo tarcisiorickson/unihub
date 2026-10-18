@@ -1,0 +1,5 @@
+node_modules/
+# vídeos pessoais e renders ficam fora do repositório público
+reels/media/
+reels/out/
+reels/specs/

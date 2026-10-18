@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>Reel Render</title>
+  <style>html,body{margin:0;background:#000}canvas{display:block}</style>
+</head>
+<body>
+  <!-- Página usada pelo renderizador headless (scripts/render-reel.js). -->
+  <canvas id="c" width="1080" height="1920"></canvas>
+  <script src="engine.js"></script>
+  <script>
+    const ctx = document.getElementById('c').getContext('2d');
+    let spec = null;
+    let media = {};
+    let fps = 30;
+    const cache = new Map();
+
+    async function loadImage(url) {
+      if (cache.has(url)) return cache.get(url);
+      const img = new Image();
+      img.src = url;
+      await img.decode();
+      cache.set(url, img);
+      if (cache.size > 8) cache.delete(cache.keys().next().value);
+      return img;
+    }
+
+    window.setSpec = (s) => { spec = s; return ReelEngine.timeline(s).duration; };
+    // media: { [índice da cena]: { base: URL da pasta de quadros, count } }
+    window.setMedia = (m, f) => { media = m; fps = f; };
+    window.frameAt = async (t, type, quality) => {
+      const imgs = {};
+      for (const r of ReelEngine.mediaRequests(spec, t)) {
+        const m = media[r.index];
+        if (!m) continue;
+        const idx = Math.min(m.count, Math.max(1, Math.floor(r.local * fps) + 1));
+        imgs[r.index] = await loadImage(`${m.base}/f_${String(idx).padStart(5, '0')}.jpg`);
+      }
+      ReelEngine.renderFrame(ctx, spec, t, { media: (i) => imgs[i] || null });
+      return ctx.canvas.toDataURL(type || 'image/png', quality);
+    };
+  </script>
+</body>
+</html>

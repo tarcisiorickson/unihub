@@ -308,6 +308,96 @@ app.get('/api/users/:id/materials', (req, res) => {
   }
 });
 
+// Estúdio de Reels: roteiros salvos e renderização MP4
+const { spawn } = require('child_process');
+const REELS_SPECS = path.join(__dirname, 'reels', 'specs');
+const REELS_OUT = path.join(__dirname, 'reels', 'out');
+const REEL_TEMPLATES = path.join(__dirname, 'public', 'reels', 'templates');
+const REELS_MEDIA = path.join(__dirname, 'reels', 'media');
+[REELS_SPECS, REELS_OUT, REELS_MEDIA].forEach((dir) => fs.mkdirSync(dir, { recursive: true }));
+app.use('/reels-out', express.static(REELS_OUT));
+app.use('/reels-media', express.static(REELS_MEDIA));
+
+// Vídeos do criador usados como fundo das cenas
+const mediaUpload = multer({
+  storage: multer.diskStorage({
+    destination: REELS_MEDIA,
+    filename: (req, file, cb) => {
+      const name = Buffer.from(file.originalname, 'latin1').toString('utf8');
+      const base = path.basename(name, path.extname(name))
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 50) || 'video';
+      cb(null, `${base}-${Date.now().toString(36)}${path.extname(file.originalname).toLowerCase() || '.mp4'}`);
+    }
+  }),
+  limits: { fileSize: 300 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => cb(null, file.mimetype.startsWith('video/'))
+});
+
+app.post('/api/reels/media', mediaUpload.single('file'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'Envie um arquivo de vídeo' });
+  res.json({ src: req.file.filename });
+});
+
+const renderJobs = {};
+const validSlug = (slug) => /^[a-z0-9-]{1,60}$/.test(slug);
+const specPath = (slug) => {
+  const saved = path.join(REELS_SPECS, `${slug}.json`);
+  return fs.existsSync(saved) ? saved : path.join(REEL_TEMPLATES, `${slug}.json`);
+};
+
+app.get('/api/reels', (req, res) => {
+  const names = fs.readdirSync(REELS_SPECS).filter((f) => f.endsWith('.json')).map((f) => f.slice(0, -5));
+  res.json(names);
+});
+
+app.get('/api/reels/:slug', (req, res) => {
+  const { slug } = req.params;
+  if (!validSlug(slug) || !fs.existsSync(specPath(slug))) {
+    return res.status(404).json({ error: 'Roteiro não encontrado' });
+  }
+  res.sendFile(specPath(slug));
+});
+
+app.put('/api/reels/:slug', express.json({ limit: '1mb' }), (req, res) => {
+  const { slug } = req.params;
+  if (!validSlug(slug)) return res.status(400).json({ error: 'Nome inválido' });
+  if (!req.body || !Array.isArray(req.body.scenes)) return res.status(400).json({ error: 'Roteiro sem cenas' });
+  fs.writeFileSync(path.join(REELS_SPECS, `${slug}.json`), JSON.stringify(req.body, null, 2));
+  res.json({ message: 'Roteiro salvo', slug });
+});
+
+app.post('/api/reels/:slug/render', (req, res) => {
+  const { slug } = req.params;
+  if (!validSlug(slug) || !fs.existsSync(specPath(slug))) {
+    return res.status(404).json({ error: 'Roteiro não encontrado' });
+  }
+  if (renderJobs[slug] && renderJobs[slug].state === 'running') {
+    return res.status(409).json({ error: 'Renderização já em andamento' });
+  }
+  const job = { state: 'running', progress: '', error: '' };
+  renderJobs[slug] = job;
+  const out = path.join(REELS_OUT, `${slug}.mp4`);
+  const child = spawn(process.execPath, [path.join(__dirname, 'scripts', 'render-reel.js'), specPath(slug), '--out', out]);
+  child.stdout.on('data', (d) => {
+    const m = String(d).match(/(\d+)%/g);
+    if (m) job.progress = m[m.length - 1];
+  });
+  child.stderr.on('data', (d) => { job.error += d; });
+  child.on('close', (code) => {
+    job.state = code === 0 ? 'done' : 'error';
+    if (code === 0) {
+      job.video = `/reels-out/${slug}.mp4`;
+      job.cover = `/reels-out/${slug}-capa.jpg`;
+      job.sheet = `/reels-out/${slug}-folha.jpg`;
+    }
+  });
+  res.json({ message: 'Renderização iniciada' });
+});
+
+app.get('/api/reels/:slug/render', (req, res) => {
+  res.json(renderJobs[req.params.slug] || { state: 'idle' });
+});
+
 // Criar diretório de uploads se não existir
 if (!fs.existsSync('uploads')) {
   fs.mkdirSync('uploads');

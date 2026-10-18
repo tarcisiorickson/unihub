@@ -1,0 +1,176 @@
+{
+  "title": "SAMU: 4 letras que salvam do AVC",
+  "look": "impacto",
+  "handle": "@med.vihm",
+  "captions": true,
+  "coverAt": 2.6,
+  "sound": {
+    "enabled": true,
+    "bpm": 84,
+    "heartbeat": true,
+    "pad": true,
+    "sfx": true
+  },
+  "scenes": [
+    {
+      "type": "hook",
+      "duration": 3.2,
+      "media": {
+        "src": "intubacao-bruto.mp4",
+        "from": 20,
+        "dim": 0.62,
+        "grade": "none"
+      },
+      "kicker": "Medicina em 30s",
+      "text": "4 letras que podem salvar a vida de quem você ama",
+      "highlight": [
+        "4 letras"
+      ],
+      "icon": "brain",
+      "caption": "e quase ninguém conhece"
+    },
+    {
+      "type": "stat",
+      "duration": 3.8,
+      "kicker": "A cada minuto de AVC sem tratamento",
+      "value": 1.9,
+      "decimals": 1,
+      "unit": "milhão de neurônios",
+      "label": "são perdidos",
+      "highlight": [
+        "perdidos"
+      ],
+      "source": "Fonte: Saver JL. Time is brain — quantified. Stroke, 2006."
+    },
+    {
+      "type": "step",
+      "duration": 3.6,
+      "letters": [
+        "S",
+        "A",
+        "M",
+        "U"
+      ],
+      "stepIndex": 0,
+      "letter": "S",
+      "title": "Sorria",
+      "icon": "smile",
+      "text": "Peça para a pessoa dar um sorriso largo.",
+      "caption": "Um lado da boca caiu?"
+    },
+    {
+      "type": "step",
+      "duration": 3.6,
+      "letters": [
+        "S",
+        "A",
+        "M",
+        "U"
+      ],
+      "stepIndex": 1,
+      "letter": "A",
+      "title": "Abrace",
+      "icon": "arms",
+      "text": "Peça para erguer os dois braços, como num abraço.",
+      "caption": "Um braço cai ou não sobe?"
+    },
+    {
+      "type": "step",
+      "duration": 3.6,
+      "letters": [
+        "S",
+        "A",
+        "M",
+        "U"
+      ],
+      "stepIndex": 2,
+      "letter": "M",
+      "title": "Música",
+      "icon": "speech",
+      "text": "Peça para cantar um trecho ou repetir uma frase simples.",
+      "caption": "A fala saiu enrolada?"
+    },
+    {
+      "type": "step",
+      "duration": 3.6,
+      "letters": [
+        "S",
+        "A",
+        "M",
+        "U"
+      ],
+      "stepIndex": 3,
+      "letter": "U",
+      "title": "Urgente",
+      "icon": "phone",
+      "text": "Viu qualquer sinal? Ligue 192 na hora e anote o horário.",
+      "highlight": [
+        "192"
+      ],
+      "caption": "Não espere passar!"
+    },
+    {
+      "type": "myth",
+      "duration": 4.4,
+      "myth": "Vou esperar para ver se passa.",
+      "truth": "O remédio que dissolve o coágulo funciona, em geral, até 4h30 após os primeiros sintomas. Cada minuto conta.",
+      "highlight": [
+        "4h30",
+        "minuto",
+        "conta."
+      ]
+    },
+    {
+      "type": "recap",
+      "duration": 3.4,
+      "title": "Grave a sigla:",
+      "letters": [
+        "S",
+        "A",
+        "M",
+        "U"
+      ],
+      "words": [
+        "Sorria",
+        "Abrace",
+        "Música",
+        "Urgente"
+      ],
+      "note": "Viu 1 sinal? Ligue 192.",
+      "noteHighlight": [
+        "192."
+      ]
+    },
+    {
+      "type": "cta",
+      "duration": 4.4,
+      "media": {
+        "src": "intubacao-bruto.mp4",
+        "from": 24,
+        "dim": 0.66,
+        "grade": "none"
+      },
+      "text": "Salve e envie para alguém que você ama",
+      "highlight": [
+        "envie"
+      ],
+      "handle": "@med.vihm",
+      "bio": "Medicina em 30 segundos",
+      "disclaimer": "Conteúdo educativo. Não substitui avaliação médica. Emergência: ligue 192."
+    }
+  ],
+  "post": {
+    "caption": "4 letras que podem salvar a vida de quem você ama 🧠\n\nNo AVC, cada minuto sem tratamento custa cerca de 1,9 milhão de neurônios. Reconhecer rápido muda tudo. Use a sigla SAMU:\n\nS — Sorria: um lado da boca caiu?\nA — Abrace: peça para erguer os dois braços. Um cai?\nM — Música: peça para cantar ou repetir uma frase. A fala saiu enrolada?\nU — Urgente: qualquer sinal, ligue 192 e anote o horário em que começou.\n\nNão espere \"ver se passa\": o remédio que dissolve o coágulo funciona, em geral, até 4h30 após os primeiros sintomas.\n\n📌 Salve e envie para alguém que você ama.\n\nFontes: Ministério da Saúde; Rede Brasil AVC; Saver JL, Stroke 2006.\nConteúdo educativo. Não substitui avaliação médica.",
+    "hashtags": [
+      "#avc",
+      "#primeirossocorros",
+      "#medicina",
+      "#saude",
+      "#neurologia",
+      "#estudantedemedicina",
+      "#samu192",
+      "#dicasdesaude"
+    ],
+    "coverText": "4 LETRAS QUE SALVAM VIDAS"
+  }
+}

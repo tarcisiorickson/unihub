@@ -1,0 +1,76 @@
+{
+  "title": "Errando no manequim pra não errar no paciente",
+  "look": "retro",
+  "handle": "@med.vihm",
+  "captions": true,
+  "coverAt": 1.9,
+  "sound": { "enabled": true, "bpm": 92, "heartbeat": true, "pad": true, "sfx": true },
+  "scenes": [
+    {
+      "type": "clip",
+      "duration": 3.4,
+      "media": { "src": "intubacao-bruto.mp4", "from": 3, "dim": 0.4, "zoom": 1.1 },
+      "title": "errando no manequim",
+      "subtitle": "pra não errar no paciente",
+      "caption": "bastidores da prática médica"
+    },
+    {
+      "type": "clip",
+      "duration": 4.2,
+      "media": { "src": "intubacao-bruto.mp4", "from": 12.5, "dim": 0.35, "zoom": 1.12 },
+      "search": { "text": "como intubar?", "at": 0.2, "y": 470 },
+      "stickers": [
+        { "text": "laringoscópio", "x": 0.3, "y": 0.36, "at": 1.4, "arrow": "right" },
+        { "text": "manequim de vias aéreas", "x": 0.5, "y": 0.66, "at": 2.1, "arrow": "left", "arrowUp": true }
+      ],
+      "caption": "um tubo pela boca até a traqueia",
+      "captionDelay": 2.4
+    },
+    {
+      "type": "list",
+      "duration": 5,
+      "title": "O passo a passo no simulador",
+      "highlight": ["simulador"],
+      "items": [
+        "Alinhar a cabeça (posição olfativa)",
+        "Laringoscópio na mão esquerda",
+        "Ver as cordas vocais",
+        "Passar o tubo e insuflar o balonete",
+        "Confirmar: capnografia e ausculta"
+      ]
+    },
+    {
+      "type": "clip",
+      "duration": 3.8,
+      "media": { "src": "intubacao-editado.mp4", "from": 47, "dim": 0.35, "zoom": 1.08 },
+      "stickers": [
+        { "text": "a little practice", "x": 0.33, "y": 0.3, "at": 0.3, "arrow": "right" },
+        { "text": "a lot of coragem", "x": 0.6, "y": 0.62, "at": 0.9, "arrow": "left", "arrowUp": true }
+      ],
+      "caption": "cada erro aqui é um acerto lá",
+      "captionDelay": 1.6
+    },
+    {
+      "type": "myth",
+      "duration": 4.4,
+      "myth": "Treinar em manequim é só teatro.",
+      "truth": "Simulação é a forma recomendada de treinar procedimentos de alto risco antes do paciente real.",
+      "highlight": ["recomendada", "alto", "risco"]
+    },
+    {
+      "type": "cta",
+      "duration": 4.4,
+      "media": { "src": "intubacao-bruto.mp4", "from": 33, "dim": 0.6 },
+      "text": "Salve e marque quem vai intubar com você no plantão",
+      "highlight": ["marque"],
+      "handle": "@med.vihm",
+      "bio": "Diário de uma estudante de medicina",
+      "disclaimer": "Conteúdo educativo, gravado em simulador. Não substitui formação supervisionada."
+    }
+  ],
+  "post": {
+    "caption": "Errando no manequim pra não errar no paciente 🫁\n\nTreino de intubação orotraqueal em simulador: alinhar a cabeça, laringoscópio na mão esquerda, ver as cordas vocais, passar o tubo, insuflar o balonete e confirmar com capnografia e ausculta.\n\nCada erro aqui é um acerto lá. 💛\n\n📌 Salve e marque quem vai intubar com você no plantão.\n\nFonte: Frerk C et al. Difficult Airway Society 2015 guidelines. Br J Anaesth, 2015.\nConteúdo educativo, gravado em simulador. Não substitui formação supervisionada.",
+    "hashtags": ["#medicina", "#estudantedemedicina", "#intubacao", "#simulacaorealistica", "#vidademedico", "#medstudent", "#emergencia"],
+    "coverText": "ERRANDO NO MANEQUIM"
+  }
+}
