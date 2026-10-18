@@ -313,7 +313,7 @@
     // ---------- som original dos vídeos (ambiente / fala) ----------
     const duck = new Float32Array(n).fill(1);
     tl.scenes.forEach((item) => {
-      const m = item.scene.media;
+      const m = Engine.effectiveMedia(spec, item);
       const pcm = opts.media && opts.media[item.index];
       const gain = m && Number(m.audio) > 0 ? Number(m.audio) : 0;
       if (!pcm || !gain) return;

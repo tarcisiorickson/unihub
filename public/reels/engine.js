@@ -60,10 +60,10 @@
       bg1: '#5f5c2b', bg2: '#27321a', glow: '#e4f064',
       text: '#fbf8e6', muted: 'rgba(251,248,230,0.72)',
       accent: '#e4f064', accent2: '#ffd84a', onAccent: '#33340f',
-      card: 'rgba(251,248,230,0.10)', cardLine: 'rgba(251,248,230,0.22)',
+      card: 'rgba(30,32,12,0.42)', cardLine: 'rgba(251,248,230,0.28)',
       ecg: 'rgba(228,240,100,0.45)',
       display: SANS, displayWeight: 900, displayStyle: 'normal', tracking: -0.055,
-      titleColor: '#e4f064', highlight: 'color', energy: 0.7, grid: false, stickers: true
+      titleColor: '#e4f064', highlight: 'scribble', scribble: '#ffffff', energy: 0.7, grid: false, stickers: true, film: true
     }
   };
 
@@ -153,7 +153,7 @@
       if (type === 'stat') out.push({ t: s.start + 0.35, type: 'impact' });
       if (type === 'myth') out.push({ t: s.start + mythTimes(s.duration).reveal, type: 'reveal' });
       if (type === 'recap') (s.scene.letters || []).forEach((_, i) => out.push({ t: s.start + 0.3 + i * 0.22, type: 'tick' }));
-      if (type === 'cta') out.push({ t: s.start + ctaTimes(s.duration).tap, type: 'tap' });
+      if (type === 'cta' && !s.scene.minimal) out.push({ t: s.start + ctaTimes(s.duration).tap, type: 'tap' });
     });
     return out;
   }
@@ -256,6 +256,9 @@
               ctx.fill();
               ctx.globalAlpha /= 0.28;
               color = look.accent;
+            } else if (look.highlight === 'scribble') {
+              color = look.accent;
+              scribbleLine(ctx, -size * 0.04, size * 0.16, w.width + size * 0.08, size, hp, look.scribble || look.accent, norm(w.text).length);
             } else {
               color = look.accent;
             }
@@ -270,6 +273,25 @@
     });
     if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
     return fit.lines.length * lh;
+  }
+
+  // sublinhado feito à mão: duas passadas levemente onduladas (p 0..1 = quanto já foi desenhado)
+  function scribbleLine(ctx, x, y, w, size, p, color, seed) {
+    if (p <= 0) return;
+    ctx.save();
+    ctx.strokeStyle = color; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.lineWidth = Math.max(4, size * 0.065);
+    ctx.beginPath();
+    const n = 28, total = n * 2;
+    for (let i = 0; i <= total * clamp(p); i++) {
+      const back = i > n;
+      const u = back ? (total - i) / n : i / n;
+      const px = x + u * w;
+      const py = y + Math.sin(u * 7 + seed) * size * 0.025 + (back ? size * 0.07 : 0) - u * size * 0.03;
+      i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+    }
+    ctx.stroke();
+    ctx.restore();
   }
 
   function drawKicker(ctx, look, text, x, y, t, start) {
@@ -652,7 +674,18 @@
         const ly = y1 + 130 + i * f.size * 1.12;
         ctx.fillText(l.words.map((q) => q.text).join(' '), x + 40, ly + f.size * 0.5);
         const sp = easeInOutCubic(prog(t, tm.strike + i * 0.12, 0.35));
-        if (sp > 0) {
+        if (sp > 0 && look.stickers) {
+          ctx.save();
+          ctx.strokeStyle = '#ff6b6b'; ctx.lineWidth = Math.max(6, f.size * 0.09); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+          ctx.beginPath();
+          const zig = Math.max(3, Math.round(l.width / 70));
+          for (let z = 0; z <= zig * sp; z++) {
+            const px = x + 36 + (z / zig) * (l.width + 8), py = ly + f.size * (z % 2 ? 0.05 : 0.35);
+            z ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+          }
+          ctx.stroke();
+          ctx.restore();
+        } else if (sp > 0) {
           ctx.fillStyle = '#e8505b';
           ctx.fillRect(x + 36, ly + f.size * 0.2, (l.width + 8) * sp, Math.max(6, f.size * 0.09));
           ctx.fillStyle = look.text;
@@ -711,6 +744,25 @@
     },
 
     cta(ctx, look, s, t, d) {
+      if (s.minimal) {
+        // final minimalista: só a frase, o @ e o aviso — sem interface falsa
+        const h = drawKinetic(ctx, look, s.text, {
+          x: SAFE.left + 10, y: 520, t, start: 0.15, size: 150, minSize: 80, maxLines: 4, lineHeight: 0.92,
+          align: 'left', color: look.titleColor || look.text, highlight: s.highlight, stagger: 0.09, maxWidth: CONTENT_W + 20
+        });
+        const p = easeOutCubic(prog(t, 1.0, 0.5));
+        if (p > 0 && s.handle) {
+          ctx.save();
+          ctx.globalAlpha *= p;
+          ctx.fillStyle = look.text; ctx.font = `800 46px ${SANS}`; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+          ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 12;
+          ctx.fillText(s.handle, SAFE.left + 100 + (1 - p) * 30, 520 + h + 70);
+          ctx.restore();
+          if (look.stickers) drawStars(ctx, SAFE.left + 40, 520 + h + 20, prog(t, 0.95, 0.9), t, look);
+        }
+        drawSmall(ctx, look, s.disclaimer, CX, 1240, t, 1.2, { size: 26, color: 'rgba(255,255,255,0.75)' });
+        return;
+      }
       const tm = ctaTimes(d);
       drawKinetic(ctx, look, s.text, { x: CX, y: 320, t, start: 0, size: 88, minSize: 56, maxLines: 3, highlight: s.highlight, stagger: 0.06 });
       // card de perfil com botão Seguir
@@ -796,12 +848,17 @@
     const { w, h } = mediaSize(img);
     if (!w || !h) return;
     const zoomEnd = m.zoom != null ? Number(m.zoom) : 1.08;
-    const z = lerp(1, zoomEnd, easeInOutCubic(clamp(lt / d)));
+    const blur = Number(m.blur) || 0;
+    const z = lerp(1, zoomEnd, easeInOutCubic(clamp(lt / d))) * (1 + (blur * 6) / W);
     const sc = Math.max(W / w, H / h) * z;
     const dw = w * sc, dh = h * sc;
     const fy = m.focusY != null ? Number(m.focusY) : 0.5;
     ctx.save();
-    if (m.grade === 'bw') ctx.filter = 'grayscale(1) contrast(1.1)';
+    const filters = [];
+    if (blur) filters.push(`blur(${blur}px)`);
+    if (m.grade === 'bw') filters.push('grayscale(1) contrast(1.1)');
+    if (filters.length) ctx.filter = filters.join(' ');
+    ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(img, (W - dw) / 2, (H - dh) * fy, dw, dh);
     ctx.filter = 'none';
     if (m.grade === 'warm' || (m.grade == null && look.stickers)) {
@@ -878,16 +935,31 @@
     });
   }
 
-  // seta rabiscada com laço, desenhada progressivamente (p 0..1)
-  function drawDoodleArrow(ctx, x0, y0, x1, y1, p, color) {
+  // seta desenhada à mão, progressiva (p 0..1). Estilos: loop (laço), curve, zigzag, spiral
+  function drawDoodleArrow(ctx, x0, y0, x1, y1, p, color, style = 'loop') {
     if (p <= 0) return;
     const pts = [];
-    const n = 60;
+    const n = 70;
+    const len = Math.hypot(x1 - x0, y1 - y0) || 1;
+    const nx = -(y1 - y0) / len, ny = (x1 - x0) / len;
     for (let i = 0; i <= n; i++) {
       const u = i / n;
-      const bx = lerp(x0, x1, u), by = lerp(y0, y1, u) - Math.sin(u * Math.PI) * 60;
-      const loop = Math.exp(-Math.pow((u - 0.45) / 0.12, 2));
-      pts.push([bx + Math.cos(u * Math.PI * 4) * 38 * loop, by + Math.sin(u * Math.PI * 4) * 38 * loop]);
+      let bx = lerp(x0, x1, u), by = lerp(y0, y1, u);
+      if (style === 'zigzag') {
+        const tri = (Math.abs(((u * 5) % 1) - 0.5) - 0.25) * 4 * (u < 0.85 ? 1 : 0);
+        bx += nx * tri * 22; by += ny * tri * 22;
+      } else if (style === 'spiral') {
+        const sp = Math.max(0, 1 - u * 1.6);
+        bx += Math.cos(u * Math.PI * 7) * 46 * sp; by += Math.sin(u * Math.PI * 7) * 46 * sp;
+      } else {
+        const bow = Math.sin(u * Math.PI) * (style === 'curve' ? 0.35 : 0.2) * len;
+        bx += nx * bow; by += ny * bow;
+        if (style === 'loop') {
+          const loop = Math.exp(-Math.pow((u - 0.45) / 0.12, 2));
+          bx += Math.cos(u * Math.PI * 4) * 38 * loop; by += Math.sin(u * Math.PI * 4) * 38 * loop;
+        }
+      }
+      pts.push([bx, by]);
     }
     const m = Math.max(2, Math.floor(pts.length * clamp(p)));
     ctx.save();
@@ -904,6 +976,45 @@
       ctx.stroke();
     }
     ctx.restore();
+  }
+
+  function drawScribbleCircle(ctx, cx, cy, rx, ry, p, color, seed = 1) {
+    if (p <= 0) return;
+    ctx.save();
+    ctx.strokeStyle = color; ctx.lineWidth = 6; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.shadowColor = 'rgba(0,0,0,0.35)'; ctx.shadowBlur = 8;
+    ctx.beginPath();
+    const turns = 1.18, n = 90;
+    for (let i = 0; i <= n * clamp(p); i++) {
+      const u = i / n;
+      const a = -Math.PI * 0.6 + u * turns * Math.PI * 2;
+      const wob = 1 + 0.06 * Math.sin(u * 9 + seed) + u * 0.08;
+      const px = cx + Math.cos(a) * rx * wob, py = cy + Math.sin(a) * ry * wob;
+      i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // adesivos, setas e círculos — valem para qualquer tipo de cena
+  function drawOverlays(ctx, look, s, t) {
+    (s.circles || []).forEach((c, i) => {
+      const at = c.at != null ? Number(c.at) : 0.8 + i * 0.4;
+      drawScribbleCircle(ctx, (c.x != null ? c.x : 0.5) * W, (c.y != null ? c.y : 0.5) * H, (c.rx || 0.16) * W, (c.ry || c.rx || 0.1) * H,
+        easeInOutCubic(prog(t, at, 0.55)), c.color || look.scribble || '#ffffff', i + 1);
+    });
+    (s.stickers || []).forEach((st, i) => {
+      const at = st.at != null ? Number(st.at) : 0.6 + i * 0.45;
+      const x = (st.x != null ? st.x : 0.5) * W, yy = (st.y != null ? st.y : 0.6) * H;
+      const rot = st.rot != null ? st.rot : (i % 2 ? 0.07 : -0.06);
+      const box = drawPill(ctx, look, st.text, x, yy, rot, prog(t, at, 0.4));
+      if (box && st.arrow && st.arrow !== 'none') {
+        const dir = st.arrow === 'left' ? -1 : 1;
+        const sx = x + dir * box.w * 0.15, sy = yy + (st.arrowUp ? -box.h : box.h);
+        const ex = sx + (st.dx != null ? Number(st.dx) : dir * 140), ey = sy + (st.dy != null ? Number(st.dy) : st.arrowUp ? -150 : 150);
+        drawDoodleArrow(ctx, sx, sy, ex, ey, prog(t, at + 0.25, 0.5), '#ffffff', st.arrowStyle || 'loop');
+      }
+    });
   }
 
   function drawPill(ctx, look, text, x, y, rot, p) {
@@ -986,17 +1097,6 @@
       y += 150;
     }
     if (s.search) drawSearchBar(ctx, look, s.search.text || s.search, s.search.y || 1000, t, s.search.at != null ? s.search.at : 0.5);
-    (s.stickers || []).forEach((st, i) => {
-      const at = st.at != null ? Number(st.at) : 0.6 + i * 0.45;
-      const x = (st.x != null ? st.x : 0.5) * W, yy = (st.y != null ? st.y : 0.6) * H;
-      const rot = st.rot != null ? st.rot : (i % 2 ? 0.07 : -0.06);
-      const box = drawPill(ctx, look, st.text, x, yy, rot, prog(t, at, 0.4));
-      if (box && st.arrow && st.arrow !== 'none') {
-        const dir = st.arrow === 'left' ? -1 : 1;
-        const sx = x + dir * box.w * 0.15, sy = yy + (st.arrowUp ? -box.h : box.h);
-        drawDoodleArrow(ctx, sx, sy, sx + dir * 140, sy + (st.arrowUp ? -150 : 150), prog(t, at + 0.25, 0.5), '#ffffff');
-      }
-    });
     if (s.shout) {
       const p = prog(t, 0, 0.3);
       ctx.save();
@@ -1082,13 +1182,67 @@
     ctx.restore();
   }
 
-  function drawScene(ctx, look, item, lt, opts) {
+  let grainTiles = null;
+  function makeCanvas(w, h) {
+    if (typeof OffscreenCanvas !== 'undefined') return new OffscreenCanvas(w, h);
+    if (typeof document !== 'undefined') { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; }
+    return null;
+  }
+  function drawFilm(ctx, t, amount) {
+    if (!grainTiles) {
+      grainTiles = [];
+      const r = rng(4242);
+      for (let k = 0; k < 4; k++) {
+        const c = makeCanvas(256, 256);
+        if (!c) return;
+        const g = c.getContext('2d');
+        const img = g.createImageData(256, 256);
+        for (let i = 0; i < img.data.length; i += 4) {
+          const v = 128 + (r() + r() - 1) * 120;
+          img.data[i] = img.data[i + 1] = img.data[i + 2] = v; img.data[i + 3] = 255;
+        }
+        g.putImageData(img, 0, 0);
+        grainTiles.push(c);
+      }
+    }
+    const f = Math.floor(t * 24);
+    ctx.save();
+    ctx.globalCompositeOperation = 'overlay';
+    ctx.globalAlpha = amount;
+    ctx.fillStyle = ctx.createPattern(grainTiles[f % 4], 'repeat');
+    ctx.translate((f * 73) % 256, (f * 151) % 256);
+    ctx.fillRect(-256, -256, W + 512, H + 512);
+    ctx.restore();
+    const v = ctx.createRadialGradient(W / 2, H * 0.45, H * 0.32, W / 2, H * 0.45, H * 0.78);
+    v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,0.42)');
+    ctx.fillStyle = v;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  // Vídeo de cada cena: o da própria cena ou o "fundo padrão" do roteiro (desfocado, contínuo)
+  function effectiveMedia(spec, item) {
     const m = item.scene.media;
-    const img = m && m.src && opts.media ? opts.media(item.index, lt, item.scene) : null;
+    if (m && m.src) return m;
+    const b = spec.backdrop;
+    if (!b || !b.src || item.scene.backdrop === false) return null;
+    return {
+      src: b.src, from: (Number(b.from) || 0) + item.start, dim: b.dim != null ? b.dim : 0.55,
+      blur: b.blur != null ? b.blur : 14, zoom: b.zoom != null ? b.zoom : 1.04, grade: b.grade, audio: Number(b.audio) || 0, backdrop: true
+    };
+  }
+
+  function drawSceneMedia(ctx, look, spec, item, lt, opts) {
+    const m = effectiveMedia(spec, item);
+    const img = m && opts.media ? opts.media(item.index, lt, m) : null;
     if (img) drawMedia(ctx, look, img, m, lt, item.duration);
-    else if (item.scene.type === 'clip') drawMediaPlaceholder(ctx, look, m);
+    return !!img;
+  }
+
+  function drawScene(ctx, look, spec, item, lt, opts, hasMedia) {
+    if (!hasMedia && item.scene.type === 'clip') drawMediaPlaceholder(ctx, look, item.scene.media);
     const fn = renderers[item.scene.type] || renderers.hook;
     fn(ctx, look, item.scene, lt, item.duration);
+    drawOverlays(ctx, look, item.scene, lt);
   }
 
   function renderFrame(ctx, spec, t, opts = {}) {
@@ -1111,12 +1265,20 @@
     const zoom = punchy ? 1 + 0.09 * look.energy * (1 - easeOutCubic(prog(lt, 0, 0.45))) : 1;
     const shake = punchy && lt < 0.3 ? (1 - lt / 0.3) * 10 * look.energy : 0;
 
+    // camada de vídeo: fica parada e faz fusão entre as cenas (nada de fundo gerado aparecendo)
+    let prevMedia = false;
+    if (prev && tp < 1) prevMedia = drawSceneMedia(ctx, look, spec, prev, prev.duration, opts);
+    ctx.save();
+    if (prev && tp < 1 && prevMedia) ctx.globalAlpha = tp;
+    const curMedia = drawSceneMedia(ctx, look, spec, cur, lt, opts);
+    ctx.restore();
+
+    // camada de texto/cartões: whip — a cena anterior sai na primeira metade, a nova entra logo depois
     if (prev && tp < 1) {
       ctx.save();
-      // whip: a cena anterior sai na primeira metade, a nova entra logo depois
       ctx.globalAlpha = 1 - clamp(tp * 2);
       ctx.translate(0, -tp * 320);
-      drawScene(ctx, look, prev, prev.duration, opts);
+      drawScene(ctx, look, spec, prev, prev.duration, opts, prevMedia);
       ctx.restore();
     }
     ctx.save();
@@ -1124,13 +1286,14 @@
     ctx.translate(W / 2 + Math.sin(lt * 90) * shake, H / 2 + (1 - tp) * 260 + Math.cos(lt * 70) * shake);
     ctx.scale(zoom, zoom);
     ctx.translate(-W / 2, -H / 2);
-    drawScene(ctx, look, cur, lt, opts);
+    drawScene(ctx, look, spec, cur, lt, opts, curMedia);
     ctx.restore();
 
-    if (prev && tp < 1 && look.energy > 0.7) {
+    if (prev && tp < 1 && look.energy > 0.7 && !look.film) {
       ctx.fillStyle = `rgba(255,255,255,${(1 - tp) * 0.18 * look.energy})`;
       ctx.fillRect(0, 0, W, H);
     }
+    if (spec.film != null ? spec.film : look.film) drawFilm(ctx, t, 0.16);
 
     if (spec.captions !== false) drawCaptions(ctx, look, cur.scene, lt, cur.duration);
     drawChrome(ctx, look, spec, t, tl);
@@ -1146,12 +1309,15 @@
     const cur = sceneAt(tl, t);
     const lt = t - cur.start;
     const out = [];
-    const has = (s) => s.scene.media && s.scene.media.src;
-    if (has(cur)) out.push({ index: cur.index, local: lt, src: cur.scene.media.src, time: (Number(cur.scene.media.from) || 0) + lt });
+    const req = (item, local) => {
+      const m = effectiveMedia(spec, item);
+      if (m) out.push({ index: item.index, local, src: m.src, time: (Number(m.from) || 0) + local });
+    };
+    req(cur, lt);
     const prev = cur.index > 0 ? tl.scenes[cur.index - 1] : null;
-    if (prev && lt < TRANSITION && has(prev)) out.push({ index: prev.index, local: prev.duration, src: prev.scene.media.src, time: (Number(prev.scene.media.from) || 0) + prev.duration });
+    if (prev && lt < TRANSITION) req(prev, prev.duration);
     return out;
   }
 
-  return { W, H, SAFE, LOOKS, SCENE_TYPES, timeline, events, captionWords, mediaRequests, renderFrame, drawIcon };
+  return { W, H, SAFE, LOOKS, SCENE_TYPES, timeline, events, captionWords, mediaRequests, effectiveMedia, renderFrame, drawIcon };
 });

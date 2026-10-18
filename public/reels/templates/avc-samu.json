@@ -1,15 +1,12 @@
 {
   "title": "SAMU: 4 letras que salvam do AVC",
-  "look": "impacto",
+  "look": "retro",
   "handle": "@med.vihm",
+  "backdrop": { "src": "intubacao-bruto.mp4", "from": 0, "blur": 16, "dim": 0.62, "audio": 0.12 },
+  "film": true,
   "captions": true,
   "coverAt": 2.6,
-  "sound": {
-    "enabled": true,
-    "music": true,
-    "sfx": true,
-    "heartbeat": true
-  },
+  "sound": { "enabled": true, "music": true, "sfx": true, "heartbeat": true, "style": "pulse" },
   "scenes": [
     {
       "type": "hook",
@@ -20,8 +17,10 @@
       "highlight": [
         "4 letras"
       ],
-      "icon": "brain",
-      "caption": "e quase ninguém conhece"
+      "caption": "e quase ninguém conhece",
+      "stickers": [
+        { "text": "teste de 10 segundos", "x": 0.7, "y": 0.215, "at": 1.4, "rot": 0.06 }
+      ]
     },
     {
       "type": "stat",
@@ -133,23 +132,26 @@
       "note": "Viu 1 sinal? Ligue 192.",
       "noteHighlight": [
         "192."
+      ],
+      "circles": [
+        { "x": 0.463, "y": 0.35, "rx": 0.44, "ry": 0.085, "at": 1.5 }
       ]
     },
     {
       "type": "cta",
       "duration": 4.4,
-      "media": { "src": "intubacao-bruto.mp4", "from": 24, "dim": 0.66, "grade": "none", "audio": 0.18 },
-      "text": "Salve e envie para alguém que você ama",
+      "media": { "src": "intubacao-bruto.mp4", "from": 24, "dim": 0.55, "grade": "none", "audio": 0.18 },
+      "minimal": true,
+      "text": "manda pra alguém que você ama",
       "highlight": [
-        "envie"
+        "ama"
       ],
       "handle": "@med.vihm",
-      "bio": "Medicina em 30 segundos",
       "disclaimer": "Conteúdo educativo. Não substitui avaliação médica. Emergência: ligue 192."
     }
   ],
   "post": {
-    "caption": "4 letras que podem salvar a vida de quem você ama 🧠\n\nNo AVC, cada minuto sem tratamento custa cerca de 1,9 milhão de neurônios. Reconhecer rápido muda tudo. Use a sigla SAMU:\n\nS — Sorria: um lado da boca caiu?\nA — Abrace: peça para erguer os dois braços. Um cai?\nM — Música: peça para cantar ou repetir uma frase. A fala saiu enrolada?\nU — Urgente: qualquer sinal, ligue 192 e anote o horário em que começou.\n\nNão espere \"ver se passa\": o remédio que dissolve o coágulo funciona, em geral, até 4h30 após os primeiros sintomas.\n\n📌 Salve e envie para alguém que você ama.\n\nFontes: Ministério da Saúde; Rede Brasil AVC; Saver JL, Stroke 2006.\nConteúdo educativo. Não substitui avaliação médica.",
+    "caption": "4 letras que podem salvar a vida de quem você ama 🧠\n\nNo AVC, cada minuto sem tratamento custa cerca de 1,9 milhão de neurônios. Reconhecer rápido muda tudo. Use a sigla SAMU:\n\nS — Sorria: um lado da boca caiu?\nA — Abrace: peça para erguer os dois braços. Um cai?\nM — Música: peça para cantar ou repetir uma frase. A fala saiu enrolada?\nU — Urgente: qualquer sinal, ligue 192 e anote o horário em que começou.\n\nNão espere \"ver se passa\": o remédio que dissolve o coágulo funciona, em geral, até 4h30 após os primeiros sintomas.\n\nManda pra alguém que você ama 💚\n\nFontes: Ministério da Saúde; Rede Brasil AVC; Saver JL, Stroke 2006.\nConteúdo educativo. Não substitui avaliação médica.",
     "hashtags": [
       "#avc",
       "#primeirossocorros",

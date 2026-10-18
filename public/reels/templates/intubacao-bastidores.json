@@ -2,14 +2,11 @@
   "title": "Errando no manequim pra não errar no paciente",
   "look": "retro",
   "handle": "@med.vihm",
+  "backdrop": { "src": "intubacao-bruto.mp4", "from": 0, "blur": 14, "dim": 0.5, "audio": 0.25 },
+  "film": true,
   "captions": true,
   "coverAt": 1.9,
-  "sound": {
-    "enabled": true,
-    "music": true,
-    "sfx": true,
-    "heartbeat": true
-  },
+  "sound": { "enabled": true, "music": true, "sfx": true, "heartbeat": true },
   "scenes": [
     {
       "type": "clip",
@@ -17,7 +14,10 @@
       "media": { "src": "intubacao-bruto.mp4", "from": 3, "dim": 0.4, "zoom": 1.1, "audio": 0.35 },
       "title": "errando no manequim",
       "subtitle": "pra não errar no paciente",
-      "caption": "bastidores da prática médica"
+      "caption": "bastidores da prática médica",
+      "stickers": [
+        { "text": "eu tentando 😅", "x": 0.3, "y": 0.58, "at": 1.2, "arrow": "right", "arrowUp": true, "arrowStyle": "curve" }
+      ]
     },
     {
       "type": "clip",
@@ -25,11 +25,14 @@
       "media": { "src": "intubacao-bruto.mp4", "from": 12.5, "dim": 0.35, "zoom": 1.12, "audio": 0.3 },
       "search": { "text": "como intubar?", "at": 0.2, "y": 470 },
       "stickers": [
-        { "text": "laringoscópio", "x": 0.3, "y": 0.36, "at": 1.4, "arrow": "right" },
-        { "text": "manequim de vias aéreas", "x": 0.5, "y": 0.66, "at": 2.1, "arrow": "left", "arrowUp": true }
+        { "text": "laringoscópio", "x": 0.34, "y": 0.33, "at": 1.3, "arrow": "left", "arrowStyle": "loop" },
+        { "text": "manequim de vias aéreas", "x": 0.6, "y": 0.72, "at": 2.2, "arrow": "left", "arrowUp": true, "arrowStyle": "curve" }
       ],
       "caption": "um tubo pela boca até a traqueia",
-      "captionDelay": 2.4
+      "captionDelay": 2.4,
+      "circles": [
+        { "x": 0.15, "y": 0.462, "rx": 0.14, "ry": 0.055, "at": 1.8 }
+      ]
     },
     {
       "type": "list",
@@ -51,8 +54,8 @@
       "duration": 3.8,
       "media": { "src": "intubacao-editado.mp4", "from": 47, "dim": 0.35, "zoom": 1.08 },
       "stickers": [
-        { "text": "a little practice", "x": 0.33, "y": 0.3, "at": 0.3, "arrow": "right" },
-        { "text": "a lot of coragem", "x": 0.6, "y": 0.62, "at": 0.9, "arrow": "left", "arrowUp": true }
+        { "text": "a little practice", "x": 0.33, "y": 0.3, "at": 0.3, "arrow": "right", "arrowStyle": "spiral" },
+        { "text": "a lot of coragem", "x": 0.6, "y": 0.62, "at": 0.9, "arrow": "left", "arrowUp": true, "arrowStyle": "zigzag" }
       ],
       "caption": "cada erro aqui é um acerto lá",
       "captionDelay": 1.6
@@ -71,18 +74,18 @@
     {
       "type": "cta",
       "duration": 4.4,
-      "media": { "src": "intubacao-bruto.mp4", "from": 33, "dim": 0.6, "audio": 0.25 },
-      "text": "Salve e marque quem vai intubar com você no plantão",
+      "media": { "src": "intubacao-bruto.mp4", "from": 33, "dim": 0.55, "audio": 0.25 },
+      "minimal": true,
+      "text": "e você, já errou no manequim?",
       "highlight": [
-        "marque"
+        "errou"
       ],
       "handle": "@med.vihm",
-      "bio": "Diário de uma estudante de medicina",
-      "disclaimer": "Conteúdo educativo, gravado em simulador. Não substitui formação supervisionada."
+      "disclaimer": "Gravado em simulador. Não substitui formação supervisionada."
     }
   ],
   "post": {
-    "caption": "Errando no manequim pra não errar no paciente 🫁\n\nTreino de intubação orotraqueal em simulador: alinhar a cabeça, laringoscópio na mão esquerda, ver as cordas vocais, passar o tubo, insuflar o balonete e confirmar com capnografia e ausculta.\n\nCada erro aqui é um acerto lá. 💛\n\n📌 Salve e marque quem vai intubar com você no plantão.\n\nFonte: Frerk C et al. Difficult Airway Society 2015 guidelines. Br J Anaesth, 2015.\nConteúdo educativo, gravado em simulador. Não substitui formação supervisionada.",
+    "caption": "Errando no manequim pra não errar no paciente 🫁\n\nTreino de intubação orotraqueal em simulador: alinhar a cabeça, laringoscópio na mão esquerda, ver as cordas vocais, passar o tubo, insuflar o balonete e confirmar com capnografia e ausculta.\n\nCada erro aqui é um acerto lá. 💛\n\nE você, já errou no manequim? Me conta aqui 👇\n\nFonte: Frerk C et al. Difficult Airway Society 2015 guidelines. Br J Anaesth, 2015.\nConteúdo educativo, gravado em simulador. Não substitui formação supervisionada.",
     "hashtags": [
       "#medicina",
       "#estudantedemedicina",

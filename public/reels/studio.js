@@ -21,7 +21,7 @@
     list: [['title', 'Título', 'text'], ['items', 'Itens (um por linha)', 'lines'], ['highlight', 'Destaques (vírgula)', 'list']],
     myth: [['myth', 'Mito', 'textarea'], ['truth', 'Verdade', 'textarea'], ['highlight', 'Destaques (vírgula)', 'list']],
     recap: [['title', 'Título', 'text'], ['letters', 'Letras (vírgula)', 'list'], ['words', 'Palavras (vírgula)', 'list'], ['note', 'Nota', 'text'], ['noteHighlight', 'Destaques da nota', 'list']],
-    cta: [['text', 'Chamada', 'textarea'], ['highlight', 'Destaques (vírgula)', 'list'], ['handle', '@ do perfil', 'text'], ['bio', 'Bio', 'text'], ['disclaimer', 'Aviso', 'textarea']],
+    cta: [['minimal', 'Final minimalista (só frase e @)', 'bool'], ['text', 'Chamada', 'textarea'], ['highlight', 'Destaques (vírgula)', 'list'], ['handle', '@ do perfil', 'text'], ['bio', 'Bio (só no final com cartão)', 'text'], ['disclaimer', 'Aviso', 'textarea']],
     clip: [['title', 'Título grande', 'textarea'], ['subtitle', 'Subtítulo (com estrelas)', 'text'], ['highlight', 'Destaques (vírgula)', 'list'], ['search.text', 'Barra de pesquisa (digitando)', 'text'], ['stickers', 'Adesivos: texto ; x ; y ; seta (left/right/none) ; up — um por linha', 'stickers'], ['shout', 'Grito na tela (ex.: SPOILER)', 'text']]
   };
   const COMMON = [['duration', 'Duração (s)', 'number'], ['caption', 'Legenda palavra a palavra', 'text'], ['captionDelay', 'Atraso da legenda (s, vazio = automático)', 'number'],
@@ -98,6 +98,13 @@
       `<option value="none" ${spec.sound.music === false ? 'selected' : ''}>Sem música (só efeitos)</option>`;
     $('fBpm').value = spec.sound.bpm || '';
     $('fMusicVol').value = spec.sound.musicVolume != null ? spec.sound.musicVolume : 1;
+    const bg = spec.backdrop || {};
+    $('fBgSrc').value = bg.src || '';
+    $('fBgFrom').value = bg.from != null ? bg.from : '';
+    $('fBgBlur').value = bg.blur != null ? bg.blur : '';
+    $('fBgDim').value = bg.dim != null ? bg.dim : '';
+    $('fBgAudio').value = bg.audio != null ? bg.audio : '';
+    $('fFilm').checked = spec.film != null ? spec.film : !!(ReelEngine.LOOKS[spec.look] || {}).film;
     $('fPost').value = spec.post.caption || '';
     $('fTags').value = (spec.post.hashtags || []).join(' ');
     renderLooks();
@@ -163,6 +170,7 @@
       fields.map(([key, label, kind]) => {
         const val = escapeHtml(fieldValue(scene, key, kind));
         if (kind === 'textarea' || kind === 'lines') return `<label>${label}<textarea data-key="${key}" data-kind="${kind}" rows="3">${val}</textarea></label>`;
+        if (kind === 'bool') return `<label class="switch"><input type="checkbox" data-key="${key}" data-kind="bool" ${getPath(scene, key) ? 'checked' : ''}><span>${label}</span></label>`;
         if (kind === 'grade') return `<label>${label}<select data-key="${key}" data-kind="grade">${GRADES.map(([v, n]) => `<option value="${v}" ${(getPath(scene, key) || '') === v ? 'selected' : ''}>${n}</option>`).join('')}</select></label>`;
         if (kind === 'stickers') return `<label>${label}<textarea data-key="${key}" data-kind="stickers" rows="3">${val}</textarea></label>`;
         if (kind === 'media') return `<label>${label}<input type="text" data-key="${key}" data-kind="text" value="${val}" placeholder="arquivo em reels/media/"></label><button class="btn small" type="button" data-upload="1">Enviar vídeo…</button>`;
@@ -199,7 +207,7 @@
       [tl.duration >= 15 && tl.duration <= 45, `Duração ideal (${fmt(tl.duration)} s)`, 'Entre 15 e 45 s para conteúdo educativo curto.'],
       [tl.scenes.every((s) => s.duration <= 5), 'Ritmo: nenhuma cena passa de 5 s', 'Cenas longas viram o ponto de saída.'],
       [!!(stat && stat.source && stat.source.replace(/fonte:?/i, '').trim()) || sc.some((s) => s.type === 'myth'), 'Informação com respaldo (número com fonte ou mito × verdade)', 'Um dado que choca com referência, ou um mito corrigido.'],
-      [last.type === 'cta' && /salv|envi|compart/.test(String(last.text).toLowerCase()), 'Termina pedindo salvar/enviar', 'Envios e salvamentos estão entre os sinais mais fortes.'],
+      [last.type === 'cta' && /salv|envi|compart|manda|marc|coment|\?/.test(String(last.text).toLowerCase()), 'Termina com um convite (enviar, salvar ou comentar)', 'Envios, salvamentos e comentários estão entre os sinais mais fortes.'],
       [spec.captions !== false && captioned >= 3, `Legendas em ${captioned} cenas`, 'Boa parte do público assiste sem som.'],
       [/não substitui|nao substitui/.test(allText), 'Aviso médico no vídeo', 'Exigência ética (CFM) e de credibilidade.'],
       [/fonte/.test(post), 'Fontes citadas na legenda do post', 'Aumenta a confiança e protege contra denúncias.'],
@@ -234,7 +242,8 @@
     const raw = el.value;
     if (key === 'search.text' && typeof scene.search === 'string') scene.search = { text: scene.search };
     let value;
-    if (kind === 'number') value = raw === '' ? undefined : Number(raw);
+    if (kind === 'bool') value = el.checked || undefined;
+    else if (kind === 'number') value = raw === '' ? undefined : Number(raw);
     else if (kind === 'list') value = raw.split(',').map((x) => x.trim()).filter(Boolean);
     else if (kind === 'lines') value = raw.split('\n').map((x) => x.trim()).filter(Boolean);
     else if (kind === 'stickers') value = raw.split('\n').map(parseSticker).filter(Boolean);
@@ -275,9 +284,9 @@
   }
 
   const usedVideos = new Set();
-  function mediaFor(index, local, scene) {
-    const m = scene.media;
-    const key = `${index}|${m.src}`;
+  function mediaFor(index, local, m) {
+    // o fundo padrão é contínuo entre as cenas: um único <video> serve todas
+    const key = m.backdrop ? `bg|${m.src}` : `${index}|${m.src}`;
     let v = videos[key];
     if (!v) {
       v = document.createElement('video');
@@ -303,8 +312,9 @@
     return v.readyState >= 2 ? v : null;
   }
 
-  async function uploadVideo(file) {
-    const scene = spec.scenes[selected];
+  async function uploadVideo(file, target) {
+    const scene = target === 'backdrop' ? spec : spec.scenes[selected];
+    const field = target === 'backdrop' ? 'backdrop.src' : 'media.src';
     try {
       status('Enviando vídeo…');
       const fd = new FormData();
@@ -312,14 +322,14 @@
       const res = await fetch('/api/reels/media', { method: 'POST', body: fd });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || res.statusText);
       const { src } = await res.json();
-      setPath(scene, 'media.src', src);
+      setPath(scene, field, src);
       status(`Vídeo "${escapeHtml(src)}" pronto para usar e renderizar.`);
     } catch (e) {
       // sem servidor: pré-visualiza localmente (o MP4 do servidor não verá este arquivo)
-      setPath(scene, 'media.src', URL.createObjectURL(file));
+      setPath(scene, field, URL.createObjectURL(file));
       status(`Servidor indisponível (${escapeHtml(e.message)}): vídeo só na pré-visualização/WebM.`);
     }
-    changed(true); renderSceneEditor();
+    changed(true); renderSceneEditor(); renderAllPanels();
   }
 
   function swap(a, b) { const t = spec.scenes[a]; spec.scenes[a] = spec.scenes[b]; spec.scenes[b] = t; }
@@ -503,7 +513,18 @@
     $('sceneList').addEventListener('click', onSceneListClick);
     $('sceneEditor').addEventListener('input', onSceneField);
     $('sceneEditor').addEventListener('click', (e) => { if (e.target.dataset.upload) $('videoFile').click(); });
-    $('videoFile').addEventListener('change', (e) => { if (e.target.files[0]) uploadVideo(e.target.files[0]); e.target.value = ''; });
+    let uploadTarget = 'scene';
+    $('sceneEditor').addEventListener('click', (e) => { if (e.target.dataset.upload) uploadTarget = 'scene'; }, true);
+    $('bgUpload').addEventListener('click', () => { uploadTarget = 'backdrop'; $('videoFile').click(); });
+    $('videoFile').addEventListener('change', (e) => { if (e.target.files[0]) uploadVideo(e.target.files[0], uploadTarget); e.target.value = ''; });
+    [['fBgSrc', 'src', 'text'], ['fBgFrom', 'from', 'number'], ['fBgBlur', 'blur', 'number'], ['fBgDim', 'dim', 'number'], ['fBgAudio', 'audio', 'number']].forEach(([id, key, kind]) => {
+      $(id).addEventListener('input', (e) => {
+        const raw = e.target.value;
+        setPath(spec, `backdrop.${key}`, raw === '' ? undefined : kind === 'number' ? Number(raw) : raw);
+        changed();
+      });
+    });
+    $('fFilm').addEventListener('change', (e) => { spec.film = e.target.checked; });
     $('newSceneType').innerHTML = Object.entries(ReelEngine.SCENE_TYPES).map(([k, v]) => `<option value="${k}">${v}</option>`).join('');
     $('addScene').addEventListener('click', () => {
       const type = $('newSceneType').value;

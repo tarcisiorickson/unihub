@@ -81,8 +81,8 @@ const MEDIA_DIR = path.join(ROOT, 'reels/media');
 async function extractMedia(spec, tl, tmp, fps) {
   const out = {};
   for (const item of tl.scenes) {
-    const m = item.scene.media;
-    if (!m || !m.src) continue;
+    const m = Engine.effectiveMedia(spec, item);
+    if (!m) continue;
     const src = path.isAbsolute(m.src) ? m.src : path.join(MEDIA_DIR, m.src);
     if (!fs.existsSync(src)) {
       console.warn(`aviso: vídeo não encontrado (${m.src}); a cena ${item.index + 1} usa o fundo padrão`);
@@ -91,7 +91,8 @@ async function extractMedia(spec, tl, tmp, fps) {
     const dir = path.join(tmp, `m${item.index}`);
     fs.mkdirSync(dir);
     await run('ffmpeg', ['-loglevel', 'error', '-ss', String(Number(m.from) || 0), '-t', String(item.duration + 0.6), '-i', src,
-      '-vf', `fps=${fps},scale=-2:1280`, '-q:v', '3', path.join(dir, 'f_%05d.jpg')]);
+      // já no tamanho final (cobre 1080x1920), ampliação lanczos e nitidez leve contra a compressão do WhatsApp
+      '-vf', `fps=${fps},scale=1080:1920:force_original_aspect_ratio=increase:flags=lanczos,unsharp=5:5:0.55:5:5:0`, '-q:v', '2', path.join(dir, 'f_%05d.jpg')]);
     const count = fs.readdirSync(dir).length;
     if (count) out[item.index] = { base: `/media/m${item.index}`, count };
   }
@@ -102,8 +103,8 @@ async function extractMedia(spec, tl, tmp, fps) {
 async function extractMediaAudio(spec, tl) {
   const out = {};
   for (const item of tl.scenes) {
-    const m = item.scene.media;
-    if (!m || !m.src || !(Number(m.audio) > 0)) continue;
+    const m = Engine.effectiveMedia(spec, item);
+    if (!m || !(Number(m.audio) > 0)) continue;
     const src = path.isAbsolute(m.src) ? m.src : path.join(MEDIA_DIR, m.src);
     if (!fs.existsSync(src)) continue;
     const pcm = await new Promise((resolve, reject) => {
@@ -181,7 +182,7 @@ async function main() {
     const total = Math.round(tl.duration * args.fps);
     const ff = ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(args.fps), '-c:v', 'png', '-i', '-'];
     if (wav) ff.push('-i', wav);
-    ff.push('-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-r', String(args.fps));
+    ff.push('-c:v', 'libx264', '-preset', 'slow', '-crf', '16', '-profile:v', 'high', '-level', '4.2', '-pix_fmt', 'yuv420p', '-r', String(args.fps));
     if (wav) ff.push('-af', `${MASTER},${await loudnormFilter(wav)}`, '-c:a', 'aac', '-b:a', '192k', '-ar', '44100', '-ac', '2', '-shortest');
     ff.push('-movflags', '+faststart', out);
 
