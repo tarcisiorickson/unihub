@@ -182,7 +182,8 @@ async function main() {
     const total = Math.round(tl.duration * args.fps);
     const ff = ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(args.fps), '-c:v', 'png', '-i', '-'];
     if (wav) ff.push('-i', wav);
-    ff.push('-c:v', 'libx264', '-preset', 'slow', '-crf', '16', '-profile:v', 'high', '-level', '4.2', '-pix_fmt', 'yuv420p', '-r', String(args.fps));
+    // CRF 17 com teto de 12 Mbps: nítido e num tamanho que o Instagram aceita sem recomprimir demais
+    ff.push('-c:v', 'libx264', '-preset', 'medium', '-crf', '17', '-maxrate', '12M', '-bufsize', '24M', '-profile:v', 'high', '-level', '4.2', '-pix_fmt', 'yuv420p', '-r', String(args.fps));
     if (wav) ff.push('-af', `${MASTER},${await loudnormFilter(wav)}`, '-c:a', 'aac', '-b:a', '192k', '-ar', '44100', '-ac', '2', '-shortest');
     ff.push('-movflags', '+faststart', out);
 

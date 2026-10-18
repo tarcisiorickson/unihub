@@ -1205,7 +1205,8 @@
         grainTiles.push(c);
       }
     }
-    const f = Math.floor(t * 24);
+    // o grão troca 8x por segundo: textura de filme sem explodir o tamanho do arquivo
+    const f = Math.floor(t * 8);
     ctx.save();
     ctx.globalCompositeOperation = 'overlay';
     ctx.globalAlpha = amount;
@@ -1293,7 +1294,7 @@
       ctx.fillStyle = `rgba(255,255,255,${(1 - tp) * 0.18 * look.energy})`;
       ctx.fillRect(0, 0, W, H);
     }
-    if (spec.film != null ? spec.film : look.film) drawFilm(ctx, t, 0.16);
+    if (spec.film != null ? spec.film : look.film) drawFilm(ctx, t, 0.09);
 
     if (spec.captions !== false) drawCaptions(ctx, look, cur.scene, lt, cur.duration);
     drawChrome(ctx, look, spec, t, tl);
