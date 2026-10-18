@@ -29,7 +29,7 @@
     {
       "type": "vlog",
       "duration": 0.952,
-      "media": { "src": "ddm-jaleco-estudando.mp4", "from": 0.3, "dim": 0, "zoom": 1, "grade": "none" }
+      "media": { "src": "ddm-jaleco-novo.mp4", "from": 0.0, "dim": 0, "zoom": 1, "grade": "none" }
     },
     {
       "type": "vlog",
@@ -54,7 +54,7 @@
     {
       "type": "vlog",
       "duration": 0.952,
-      "media": { "src": "ddm-jaleco-estudando.mp4", "from": 1.9, "dim": 0, "zoom": 1, "grade": "none" }
+      "media": { "src": "ddm-jaleco-novo.mp4", "from": 4.0, "dim": 0, "zoom": 1, "grade": "none" }
     },
     {
       "type": "vlog",
