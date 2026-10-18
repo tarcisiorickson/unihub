@@ -571,7 +571,7 @@
       const p = easeOutCubic(prog(t, 0.35, Math.min(1.4, d * 0.45)));
       const value = Number(s.value) || 0;
       const shown = (value * p).toLocaleString('pt-BR', { minimumFractionDigits: s.decimals || 0, maximumFractionDigits: s.decimals || 0 });
-      const label = `${s.prefix || ''}${shown}`;
+      const label = `${s.prefix || ''}${shown}${s.suffix || ''}`;
       const sc = 1 + 0.06 * Math.sin(prog(t, 0.35, 0.5) * Math.PI) * look.energy;
       ctx.save();
       ctx.translate(CX, 1000); ctx.scale(sc, sc);
@@ -853,13 +853,14 @@
     const sc = Math.max(W / w, H / h) * z;
     const dw = w * sc, dh = h * sc;
     const fy = m.focusY != null ? Number(m.focusY) : 0.5;
+    const fx = m.focusX != null ? Number(m.focusX) : 0.5;
     ctx.save();
     const filters = [];
     if (blur) filters.push(`blur(${blur}px)`);
     if (m.grade === 'bw') filters.push('grayscale(1) contrast(1.1)');
     if (filters.length) ctx.filter = filters.join(' ');
     ctx.imageSmoothingQuality = 'high';
-    ctx.drawImage(img, (W - dw) / 2, (H - dh) * fy, dw, dh);
+    ctx.drawImage(img, (W - dw) * fx, (H - dh) * fy, dw, dh);
     ctx.filter = 'none';
     if (m.grade === 'warm' || (m.grade == null && look.stickers)) {
       // tom dourado/esverdeado da referência
@@ -1234,7 +1235,8 @@
 
   function drawSceneMedia(ctx, look, spec, item, lt, opts) {
     const m = effectiveMedia(spec, item);
-    const img = m && opts.media ? opts.media(item.index, lt, m) : null;
+    // speed < 1 = câmera lenta (estica um trecho curto e limpo do vídeo)
+    const img = m && opts.media ? opts.media(item.index, lt * (Number(m.speed) || 1), m) : null;
     if (img) drawMedia(ctx, look, img, m, lt, item.duration);
     return !!img;
   }
@@ -1315,7 +1317,8 @@
     const out = [];
     const req = (item, local) => {
       const m = effectiveMedia(spec, item);
-      if (m) out.push({ index: item.index, local, src: m.src, time: (Number(m.from) || 0) + local });
+      const sp = m && (Number(m.speed) || 1);
+      if (m) out.push({ index: item.index, local: local * sp, src: m.src, time: (Number(m.from) || 0) + local * sp });
     };
     req(cur, lt);
     const prev = cur.index > 0 ? tl.scenes[cur.index - 1] : null;

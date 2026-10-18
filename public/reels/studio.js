@@ -8,7 +8,8 @@
 
   const TEMPLATES = [
     { name: 'avc-samu', label: 'Modelo: AVC — sigla SAMU', url: 'templates/avc-samu.json' },
-    { name: 'intubacao-bastidores', label: 'Modelo: bastidores da intubação (vídeo próprio)', url: 'templates/intubacao-bastidores.json' }
+    { name: 'intubacao-bastidores', label: 'Modelo: bastidores da intubação (vídeo próprio)', url: 'templates/intubacao-bastidores.json' },
+    { name: 'diu-mitos', label: 'Modelo: DIU — mitos e verdades (vídeo próprio)', url: 'templates/diu-mitos.json' }
   ];
   const ICONS = ['', 'brain', 'heart', 'smile', 'arms', 'speech', 'phone', 'clock', 'alert', 'check', 'x', 'bookmark', 'send'];
   const TYPE_COLORS = { hook: '#ff3b5c', stat: '#f5a524', step: '#7c6cff', list: '#3fa7ff', myth: '#e8505b', recap: '#2ecc8f', cta: '#d62976', clip: '#b5c42f' };
@@ -16,7 +17,7 @@
   // Campos editáveis por tipo de cena: [chave, rótulo, tipo de campo]
   const FIELDS = {
     hook: [['kicker', 'Selo', 'text'], ['text', 'Texto do gancho', 'textarea'], ['highlight', 'Palavras em destaque (vírgula)', 'list'], ['icon', 'Ícone', 'icon']],
-    stat: [['kicker', 'Frase de abertura', 'text'], ['value', 'Número', 'number'], ['decimals', 'Casas decimais', 'number'], ['prefix', 'Prefixo', 'text'], ['unit', 'Unidade', 'text'], ['label', 'Complemento', 'text'], ['highlight', 'Destaques (vírgula)', 'list'], ['source', 'Fonte', 'text']],
+    stat: [['kicker', 'Frase de abertura', 'text'], ['value', 'Número', 'number'], ['decimals', 'Casas decimais', 'number'], ['prefix', 'Prefixo', 'text'], ['suffix', 'Sufixo (ex.: %)', 'text'], ['unit', 'Unidade', 'text'], ['label', 'Complemento', 'text'], ['highlight', 'Destaques (vírgula)', 'list'], ['source', 'Fonte', 'text']],
     step: [['letter', 'Letra', 'text'], ['title', 'Título', 'text'], ['text', 'Instrução', 'textarea'], ['icon', 'Ícone', 'icon'], ['highlight', 'Destaques (vírgula)', 'list'], ['letters', 'Sigla (letras, vírgula)', 'list'], ['stepIndex', 'Posição na sigla (0 = primeira)', 'number']],
     list: [['title', 'Título', 'text'], ['items', 'Itens (um por linha)', 'lines'], ['highlight', 'Destaques (vírgula)', 'list']],
     myth: [['myth', 'Mito', 'textarea'], ['truth', 'Verdade', 'textarea'], ['highlight', 'Destaques (vírgula)', 'list']],
@@ -25,7 +26,7 @@
     clip: [['title', 'Título grande', 'textarea'], ['subtitle', 'Subtítulo (com estrelas)', 'text'], ['highlight', 'Destaques (vírgula)', 'list'], ['search.text', 'Barra de pesquisa (digitando)', 'text'], ['stickers', 'Adesivos: texto ; x ; y ; seta (left/right/none) ; up — um por linha', 'stickers'], ['shout', 'Grito na tela (ex.: SPOILER)', 'text']]
   };
   const COMMON = [['duration', 'Duração (s)', 'number'], ['caption', 'Legenda palavra a palavra', 'text'], ['captionDelay', 'Atraso da legenda (s, vazio = automático)', 'number'],
-    ['media.src', 'Seu vídeo de fundo', 'media'], ['media.from', 'Começar o vídeo em (s)', 'number'], ['media.dim', 'Escurecer vídeo (0–1)', 'number'], ['media.zoom', 'Zoom lento até (ex.: 1.1)', 'number'], ['media.grade', 'Tom do vídeo', 'grade'], ['media.audio', 'Som original do vídeo (0 = mudo, 1 = cheio)', 'number']];
+    ['media.src', 'Seu vídeo de fundo', 'media'], ['media.from', 'Começar o vídeo em (s)', 'number'], ['media.dim', 'Escurecer vídeo (0–1)', 'number'], ['media.zoom', 'Zoom lento até (ex.: 1.1)', 'number'], ['media.focusX', 'Enquadramento horizontal (0 = esquerda, 1 = direita)', 'number'], ['media.speed', 'Velocidade (0.5 = câmera lenta)', 'number'], ['media.grade', 'Tom do vídeo', 'grade'], ['media.audio', 'Som original do vídeo (0 = mudo, 1 = cheio)', 'number']];
   const GRADES = [['', 'automático'], ['none', 'original'], ['warm', 'dourado (retrô)'], ['bw', 'preto e branco']];
 
   const DEFAULT_SCENES = {
@@ -299,6 +300,7 @@
     let target = (Number(m.from) || 0) + local;
     if (v.duration) target = Math.min(target, v.duration - 0.05);
     const isFrozen = local >= ReelEngine.timeline(spec).scenes[index].duration - 0.01;
+    v.playbackRate = Math.min(2, Math.max(0.25, Number(m.speed) || 1));
     const vol = Math.min(1, Math.max(0, Number(m.audio) || 0));
     v.muted = !(vol > 0 && playing && !isFrozen && spec.sound.enabled !== false);
     v.volume = vol;

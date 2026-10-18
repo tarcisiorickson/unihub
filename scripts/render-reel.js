@@ -90,7 +90,7 @@ async function extractMedia(spec, tl, tmp, fps) {
     }
     const dir = path.join(tmp, `m${item.index}`);
     fs.mkdirSync(dir);
-    await run('ffmpeg', ['-loglevel', 'error', '-ss', String(Number(m.from) || 0), '-t', String(item.duration + 0.6), '-i', src,
+    await run('ffmpeg', ['-loglevel', 'error', '-ss', String(Number(m.from) || 0), '-t', String(item.duration * (Number(m.speed) || 1) + 0.6), '-i', src,
       // já no tamanho final (cobre 1080x1920), ampliação lanczos e nitidez leve contra a compressão do WhatsApp
       '-vf', `fps=${fps},scale=1080:1920:force_original_aspect_ratio=increase:flags=lanczos,unsharp=5:5:0.55:5:5:0`, '-q:v', '2', path.join(dir, 'f_%05d.jpg')]);
     const count = fs.readdirSync(dir).length;
@@ -108,8 +108,9 @@ async function extractMediaAudio(spec, tl) {
     const src = path.isAbsolute(m.src) ? m.src : path.join(MEDIA_DIR, m.src);
     if (!fs.existsSync(src)) continue;
     const pcm = await new Promise((resolve, reject) => {
-      const p = spawn('ffmpeg', ['-loglevel', 'error', '-ss', String(Number(m.from) || 0), '-t', String(item.duration), '-i', src, '-vn',
-        '-af', 'highpass=f=120,lowpass=f=9000,afftdn=nf=-28,dynaudnorm=f=250:g=15:p=0.7', '-ac', '1', '-ar', '44100', '-f', 'f32le', '-']);
+      const speed = Math.min(2, Math.max(0.5, Number(m.speed) || 1));
+      const p = spawn('ffmpeg', ['-loglevel', 'error', '-ss', String(Number(m.from) || 0), '-t', String(item.duration * speed), '-i', src, '-vn',
+        '-af', `highpass=f=120,lowpass=f=9000,afftdn=nf=-28,dynaudnorm=f=250:g=15:p=0.7${speed !== 1 ? `,atempo=${speed}` : ''}`, '-ac', '1', '-ar', '44100', '-f', 'f32le', '-']);
       const chunks = [];
       p.stdout.on('data', (d) => chunks.push(d));
       p.on('close', (code) => (code === 0 ? resolve(Buffer.concat(chunks)) : reject(new Error('falha ao extrair áudio de ' + m.src))));

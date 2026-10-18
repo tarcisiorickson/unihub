@@ -1,0 +1,93 @@
+{
+  "title": "O que ninguém te conta sobre o DIU",
+  "look": "retro",
+  "handle": "@med.vihm",
+  "film": true,
+  "captions": true,
+  "coverAt": 2.4,
+  "sound": { "enabled": true, "music": true, "sfx": true, "heartbeat": false, "style": "pop" },
+  "scenes": [
+    {
+      "type": "clip",
+      "duration": 3.2,
+      "media": { "src": "intubacao-editado.mp4", "from": 19, "speed": 0.6, "dim": 0.4, "zoom": 1.2, "focusX": 0.2, "audio": 0 },
+      "title": "o que ninguém te conta sobre o DIU",
+      "highlight": ["DIU"],
+      "stickers": [
+        { "text": "treinando no simulador", "x": 0.3, "y": 0.5, "at": 1.1, "arrow": "right", "arrowStyle": "curve" }
+      ],
+      "caption": "3 coisas que todo mundo erra",
+      "captionDelay": 1.6
+    },
+    {
+      "type": "stat",
+      "duration": 3.6,
+      "media": { "src": "intubacao-editado.mp4", "from": 19, "speed": 0.5, "blur": 16, "dim": 0.62, "zoom": 1.04, "audio": 0 },
+      "kicker": "Eficácia do DIU no 1º ano de uso",
+      "value": 99,
+      "decimals": 0,
+      "prefix": ">",
+      "suffix": "%",
+      "unit": "a pílula, no uso real,",
+      "label": "fica perto de 93%",
+      "highlight": ["93%"],
+      "source": "Fonte: OMS — Planejamento Familiar: Manual Global, 2018."
+    },
+    {
+      "type": "myth",
+      "duration": 4.2,
+      "media": { "src": "intubacao-editado.mp4", "from": 46, "blur": 16, "dim": 0.62, "zoom": 1.04, "audio": 0 },
+      "myth": "Quem nunca teve filho não pode usar DIU.",
+      "truth": "Pode, sim: o DIU é opção para a maioria das mulheres, inclusive quem nunca engravidou.",
+      "highlight": ["Pode,", "sim:", "nunca", "engravidou."]
+    },
+    {
+      "type": "myth",
+      "duration": 4.2,
+      "media": { "src": "intubacao-editado.mp4", "from": 50, "blur": 16, "dim": 0.62, "zoom": 1.04, "audio": 0 },
+      "myth": "DIU é abortivo.",
+      "truth": "Não é: ele age antes da fecundação, impedindo o encontro do espermatozoide com o óvulo.",
+      "highlight": ["antes", "da", "fecundação,"]
+    },
+    {
+      "type": "clip",
+      "duration": 2,
+      "media": { "src": "intubacao-editado.mp4", "from": 24, "dim": 0.3, "zoom": 1.06, "audio": 0 },
+      "stickers": [
+        { "text": "formato de T", "x": 0.3, "y": 0.66, "at": 1.0, "arrow": "right", "arrowUp": true, "arrowStyle": "loop" }
+      ],
+      "circles": [
+        { "x": 0.5, "y": 0.47, "rx": 0.15, "ry": 0.09, "at": 1.1 }
+      ]
+    },
+    {
+      "type": "list",
+      "duration": 4.6,
+      "media": { "src": "intubacao-editado.mp4", "from": 19, "speed": 0.5, "blur": 16, "dim": 0.62, "zoom": 1.04, "audio": 0 },
+      "title": "Os tipos de DIU",
+      "highlight": ["DIU"],
+      "items": [
+        "Cobre: sem hormônio, dura até 10 anos",
+        "Hormonal: de 3 a 8 anos, conforme o modelo",
+        "O de cobre é oferecido de graça no SUS"
+      ]
+    },
+    {
+      "type": "cta",
+      "duration": 4,
+      "media": { "src": "intubacao-editado.mp4", "from": 19, "speed": 0.48, "dim": 0.55, "zoom": 1.2, "focusX": 0.2, "audio": 0 },
+      "minimal": true,
+      "text": "manda pra amiga que tem medo do DIU",
+      "highlight": ["amiga"],
+      "handle": "@med.vihm",
+      "disclaimer": "Conteúdo educativo, gravado em simulador. Converse com seu médico sobre o melhor método."
+    }
+  ],
+  "post": {
+    "caption": "O que ninguém te conta sobre o DIU 👀\n\nNo treino de inserção no simulador, deu pra ver de perto como ele é pequeno — e quantos mitos existem por aí:\n\n✨ Ele passa de 99% de eficácia no 1º ano; a pílula, no uso do dia a dia, fica perto de 93% (esquecer um comprimido acontece!).\n✨ Quem nunca teve filho também pode usar.\n✨ Não é abortivo: ele age antes da fecundação.\n\nTipos: o de cobre não tem hormônio e dura até 10 anos; o hormonal dura de 3 a 8 anos, conforme o modelo. E o de cobre é oferecido de graça no SUS 💚\n\nManda pra amiga que tem medo do DIU 👇\n\nFontes: OMS — Planejamento Familiar: Manual Global (2018); OMS — Critérios Médicos de Elegibilidade (2015); Ministério da Saúde.\nConteúdo educativo, gravado em simulador. Converse com seu médico sobre o melhor método para você.",
+    "hashtags": ["#diu", "#contracepcao", "#saudedamulher", "#ginecologia", "#medicina", "#estudantedemedicina", "#sus", "#mitoseverdades"],
+    "coverText": "o que ninguém te conta sobre o DIU",
+    "firstComment": "Qual mito sobre DIU você já ouviu? 👇",
+    "altText": "Estudante de medicina treinando a inserção de DIU em um simulador pélvico, com o texto: o que ninguém te conta sobre o DIU. O vídeo derruba mitos: DIU passa de 99% de eficácia, pode ser usado por quem nunca teve filho e não é abortivo."
+  }
+}
